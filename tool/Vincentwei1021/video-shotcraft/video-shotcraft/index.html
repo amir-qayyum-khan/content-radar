@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>video-shotcraft: Content Radar</title><meta name="description" content="Builds cinematic product promo videos in Remotion from shot recipes, beat-synced cuts, SFX and frame checks."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/pacing-edit/">Pacing &amp; Edit</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>video-shotcraft</h1><p class="line">Builds cinematic product promo videos in Remotion from shot recipes, beat-synced cuts, SFX and frame checks.</p><div class="shot-tags"><span class="tag cost cost--free">Free</span><span class="tag">Plugin</span><a class="tag" href="/stage/pacing-edit/">Pacing &amp; Edit</a><a class="tag" href="/stage/music-sfx/">Music &amp; SFX</a><a class="tag" href="/stage/review-qc/">Review &amp; QC</a><span class="tag">Cinematic</span><span class="tag">Reels &amp; shorts</span><span class="tag">Apache-2.0</span><span class="tag">Updated 2d ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/Vincentwei1021/video-shotcraft" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 23k</span><span>GitHub stars</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>Free to use. Nothing to pay for.</p><p class="svc-quote">From the README: <q>uses the standard library; downloading and analysis require FFmpeg. No API key is needed.</q></p></section><div class="doc"><h2>What it does</h2><p>video-shotcraft is a Claude Code and Codex skill that builds product promo videos with Remotion. It captures your real pages, picks shots from a library of 150 motion recipes, storyboards the film, cuts it to the beat, adds sound effects and checks frames, then delivers an editable MP4. It is not a generative video model: every frame is drawn by code from your own screenshots and copy.</p><h2>Where it fits your pipeline</h2><p>It is built for product promos from screenshots, not for AI-generated drama footage, so it does not slot directly into the Kling reference-to-clip flow. The most useful parts for your pipeline come after step 4 (Kling clips), as an alternative or complement to the ffmpeg join. Its Remotion components (flash cuts, captions, transitions), rhythm and impact shot recipes, beat-synced cutting and Freesound SFX sourcing could add energy to pacing and sound. Its frame-checking step may also help with review. Some adaptation would be needed, because the README does not say it handles Kling clips or story hooks. Treat it as a partial fit.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>npx skills add Vincentwei1021/video-shotcraft</code><button type="button" class="copy" data-copy="npx skills add Vincentwei1021/video-shotcraft">Copy</button></li></ul><h2>How to use</h2><p class="prompt">Make a 30-second promo for my product using video-shotcraft. Capture my landing page, pick punchy shots, cut to the beat and add sound effects.</p><p>A storyboard, then a Remotion project that renders a finished MP4 with shot recipes, transitions, captions and SFX. It can also open a browser editor (Motion Workbench) so you can keep editing the film.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Describe the film] --&gt; B[Capture real pages]
+B --&gt; C[Pick shots from 150-shot library]
+C --&gt; D[Storyboard the film]
+D --&gt; E[Animate with Remotion]
+E --&gt; F[Cut to beat and add SFX]
+F --&gt; G[Check every frame]
+G --&gt; H[Deliver MP4]
+H --&gt; I[Edit in Motion Workbench]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

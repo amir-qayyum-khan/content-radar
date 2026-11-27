@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>lemo-opuscar: Content Radar</title><meta name="description" content="Makes short films in 99 selectable styles entirely in code from a user story, including Blender-rendered pieces."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/visual-generation/">Visual Generation</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>lemo-opuscar</h1><p class="line">Makes short films in 99 selectable styles entirely in code from a user story, including Blender-rendered pieces.</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/visual-generation/">Visual Generation</a><a class="tag" href="/stage/story-script/">Story &amp; Script</a><span class="tag">Cinematic</span><span class="tag">Animation</span><span class="tag">Updated 1d ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/lemomo-ai/lemo-opuscar" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 22k</span><span>GitHub stars</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>Lemo-Opuscar is a library of 99 film styles that a coding agent follows to make a short film entirely in code. It renders canvas and WebGL pages frame by frame, scores the film from free sample libraries, and adds text-to-speech narration, with no video generation or stock footage. You pick a style, give a topic in one sentence, and the agent produces a finished video.</p><h2>Where it fits your pipeline</h2><p>It does not fit neatly into the Kling-plus-ffmpeg pipeline, because it makes films from code-rendered graphics rather than from reference images or generated clips. It is most useful as a side track: stylised teasers, title cards, recap or explainer pieces, or mood tests for an episode. It can also help with pacing, since a storyboard step and narration and score are built in. It will not produce live-action-looking character drama like Kling does, and it does not fix hooks or tension in the story itself.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>/plugin marketplace add lemomo-ai/lemo-opuscar</code><button type="button" class="copy" data-copy="/plugin marketplace add lemomo-ai/lemo-opuscar">Copy</button></li></ul><p>Then copy the skill's folder into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Make a 45-second film in the Neon Tubes style about a young woman who discovers her landlord has been secretly reading her messages. Tense female narrator.</p><p>The agent first asks a few questions: whether you have your own voice or music, and whether you want a storyboard first. It then writes code to draw, score and narrate the film, and returns a finished 1920x1080, 24 fps video in the folder you started from. A film takes roughly 30 to 60 minutes and a fair number of tokens.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Pick a style from the 99-style gallery] --&gt; B[Ask agent with topic and length]
+B --&gt; C[Agent asks about voice, music, storyboard]
+C --&gt; D[Agent reads guides and STYLE.md]
+D --&gt; E[Optional storyboard of key shots]
+E --&gt; F[Render canvas and WebGL frames in code]
+D --&gt; G[Score from sample libraries and TTS narration]
+F --&gt; H[Mix and encode with ffmpeg]
+G --&gt; H
+H --&gt; I[Finished 1080p film]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

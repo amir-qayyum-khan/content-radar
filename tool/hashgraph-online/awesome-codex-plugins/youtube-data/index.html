@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>youtube-data: Content Radar</title><meta name="description" content="Fetches YouTube transcripts, metadata, channel history and search results for research; read-only, no uploads or publish"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/story-script/">Story &amp; Script</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>youtube-data</h1><p class="line">Fetches YouTube transcripts, metadata, channel history and search results for research; read-only, no uploads or publish</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/story-script/">Story &amp; Script</a><a class="tag" href="/stage/other/">Other video/audio</a><span class="tag">Apache-2.0</span><span class="tag">Updated today</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/hashgraph-online/awesome-codex-plugins/tree/HEAD/plugins/ZeroPointRepo/youtube-skills/skills/youtube-data" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 1.6k</span><span>stars for the whole repository</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>youtube-data lets Claude fetch structured YouTube data through the TranscriptAPI.com service, without Google API quotas or OAuth. It can pull timestamped transcripts, video metadata (views, likes, tags, duration), search results, channel upload lists and playlist contents. It needs a TRANSCRIPT_API_KEY. The readme says a free account includes 100 credits, and most calls cost 1 credit.</p><h2>Where it fits your pipeline</h2><p>Use it before step 1 (idea to story) and step 2 (story to episodes) as research. Pull transcripts and view stats from hit micro-dramas and shorts, then study their hooks, line pacing and cliffhanger placement. This gives you concrete benchmarks to counter slow, robotic scripts. It doesn&#39;t generate or review clips.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>/plugin marketplace add hashgraph-online/awesome-codex-plugins</code><button type="button" class="copy" data-copy="/plugin marketplace add hashgraph-online/awesome-codex-plugins">Copy</button></li></ul><p>Then copy the skill's folder (<code>plugins/ZeroPointRepo/youtube-skills/skills/youtube-data</code>) into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Find the 10 most-viewed videos on the YouTube channel @ReelShort, pull the transcripts of the top 3, and tell me how each one opens in the first 10 seconds and where the cliffhanger lands.</p><p>A list of the channel&#39;s most popular videos with view counts, the timestamped transcripts of the top 3, and a short breakdown of each one&#39;s opening line, beat timing and ending hook. Claude will ask for your TRANSCRIPT_API_KEY first if it isn&#39;t set.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Your request or YouTube link] --&gt; B{TRANSCRIPT_API_KEY set?}
+B -- No --&gt; C[Create and store key]
+B -- Yes --&gt; D[Pick endpoint]
+C --&gt; D
+D --&gt; E[Transcript and metadata]
+D --&gt; F[Search]
+D --&gt; G[Channel uploads]
+E --&gt; H[TranscriptAPI.com]
+F --&gt; H
+G --&gt; H
+H --&gt; I[Structured data back to Claude]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

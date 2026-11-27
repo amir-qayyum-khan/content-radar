@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>remotion-best-practices: Content Radar</title><meta name="description" content="Router skill linking Remotion guides for creating videos, markup, elements, maps and multimedia trimming."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/pacing-edit/">Pacing &amp; Edit</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>remotion-best-practices</h1><p class="line">Router skill linking Remotion guides for creating videos, markup, elements, maps and multimedia trimming.</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/pacing-edit/">Pacing &amp; Edit</a><a class="tag" href="/stage/visual-generation/">Visual Generation</a><span class="tag">Reels &amp; shorts</span><span class="tag">Micro drama</span><span class="tag">Animation</span><span class="tag">Documentary</span><span class="tag">Updated today</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/remotion-dev/remotion/tree/HEAD/packages/skills/skills/remotion-best-practices" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 76k</span><span>stars for the whole repository</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p><p class="svc-quote">From the README: <q>Be aware of that Remotion has a special license and requires obtaining a company license in some cases. Read the [LICENSE](LICENSE.md) page for more information.</q></p></section><div class="doc"><h2>What it does</h2><p>remotion-best-practices is a router skill for Remotion, a framework that builds videos from React code. It tells Claude which sub-skill to load for each task: creating a project, writing markup, captions, rendering, Studio preview, maps, multimedia, licensing and upgrades. It also sets rules such as opening Studio to preview and only rendering when explicitly asked.</p><h2>Where it fits your pipeline</h2><p>Slots in after Kling generates the clips, as an alternative to the plain ffmpeg join in step 5. It gives you editable cut timing, zooms, transitions and captions in code with a live Studio preview. That should make pacing less robotic and speed up review, since you can scrub and adjust instead of re-rendering blindly.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>npx create-video@latest</code><button type="button" class="copy" data-copy="npx create-video@latest">Copy</button></li></ul><p>Then copy the skill's folder (<code>packages/skills/skills/remotion-best-practices</code>) into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Create a new Remotion video: a 60-second vertical micro-drama episode that joins twelve 5-second Kling clips with hard cuts, a punchy zoom on each beat, and burned-in captions. Open Studio so I can preview it.</p><p>Claude sets up a Remotion project and writes React compositions that sequence your clips with the cut timing and zooms you described. It adds captions and opens Remotion Studio for preview. It renders to MP4 only if you explicitly ask for it.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[User request] --&gt; B[remotion-best-practices router]
+B --&gt; C{Task type}
+C --&gt;|New video| D[remotion-create]
+C --&gt;|Markup| E[remotion-markup]
+C --&gt;|Captions| F[remotion-captions]
+D --&gt; G[Open Studio preview]
+E --&gt; G
+F --&gt; G
+G --&gt; H[User approves]
+H --&gt; I[npx remotion render]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

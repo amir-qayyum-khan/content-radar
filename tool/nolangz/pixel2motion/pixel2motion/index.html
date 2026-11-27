@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>pixel2motion: Content Radar</title><meta name="description" content="Turns a raster logo into clean SVG, then choreographs it into animated logo reveals using animation principles."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/visual-generation/">Visual Generation</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>pixel2motion</h1><p class="line">Turns a raster logo into clean SVG, then choreographs it into animated logo reveals using animation principles.</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/visual-generation/">Visual Generation</a><a class="tag" href="/stage/pacing-edit/">Pacing &amp; Edit</a><span class="tag">Animation</span><span class="tag">MIT</span><span class="tag">Updated 3mo ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/nolangz/pixel2motion" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 2.7k</span><span>GitHub stars</span></div></header><p class="notice">⚠ Runs code on your machine. Read the source before installing.</p><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>pixel2motion turns a raster logo (PNG, JPG, WebP or screenshot) into a clean, minimal, smooth SVG. It then choreographs that vector into a logo animation, delivered as a standalone JS-rendered HTML file, using Disney&#39;s 12 animation principles. It also writes a motion spec and saves QA frames as evidence. It is built for logo reveals, splash screens, brand intros and loading or hover motion.</p><h2>Where it fits your pipeline</h2><p>It is a side branch of the pipeline, not part of the story-to-episode flow. Use it once to make a branded intro or outro sting for the series, then join that clip to each episode with ffmpeg at the final step. It doesn&#39;t improve story, hook or pacing inside the episodes. It only gives each episode a more polished brand open or close. It outputs HTML, so you would need to screen-record or render it to video before ffmpeg can use it. The README doesn&#39;t say it exports video.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>/plugin marketplace add nolangz/pixel2motion</code><button type="button" class="copy" data-copy="/plugin marketplace add nolangz/pixel2motion">Copy</button></li></ul><p>Then copy the skill's folder into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Use pixel2motion on logo.png, my micro-drama channel logo. Vectorize it into a clean SVG and make a swift, confident 1.5 second splash reveal I can use as an episode intro.</p><p>You should get logo.svg (a smooth, motion-ready static vector) and logo_motion.html (a standalone animated reveal with replay, slow and speed controls). You should also get motion_spec.md (personality words, timeline, easing tokens) and QA images (fit overlays and a motion strip). The animation ends exactly on the verified static vector.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Raster logo] --&gt; B[Analyze parts and write motion brief]
+B --&gt; C[Fit minimal smooth SVG]
+C --&gt; D{Smoothness gate and IoU check}
+D --&gt;|fail| C
+D --&gt;|pass| E[Choreograph with 12 principles]
+E --&gt; F[Standalone HTML animation]
+F --&gt; G[Motion QA frames and strip]
+G --&gt; H[logo.svg, logo_motion.html, motion_spec.md]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

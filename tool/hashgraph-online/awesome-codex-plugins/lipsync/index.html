@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>lipsync: Content Radar</title><meta name="description" content="Lip-syncs an existing real-person video to new speech or a script using sync.so, outputting a matched MP4."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/voice-emotion/">Voice &amp; Emotion</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>lipsync</h1><p class="line">Lip-syncs an existing real-person video to new speech or a script using sync.so, outputting a matched MP4.</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/voice-emotion/">Voice &amp; Emotion</a><span class="tag">Apache-2.0</span><span class="tag">Updated today</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/hashgraph-online/awesome-codex-plugins/tree/HEAD/plugins/synchronicity-labs/skills/skills/lipsync" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 1.6k</span><span>stars for the whole repository</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>Lipsync takes one existing video of a real person and re-times the mouth to match new speech. The speech can be a voiceover, a re-recorded take, a song, or a typed script voiced by sync. labs (sync.so). It returns one MP4 and handles length mismatches, multiple faces, and cost quotes before it generates anything.</p><h2>Where it fits your pipeline</h2><p>Slots in after the clips for a scene exist and before the ffmpeg join, but only for real filmed footage of a person. The README says it is not for AI-generated characters or Kling clips, which belong to a different skill (ai-video-to-talking). For the Kling-based pipeline it is therefore of limited direct use. It helps if you mix in real actor footage and need dialogue changed or fixed without a reshoot, which makes the voice feel natural and cuts re-record time. It does not address the hook or pacing problems in the story.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>/plugin marketplace add hashgraph-online/awesome-codex-plugins</code><button type="button" class="copy" data-copy="/plugin marketplace add hashgraph-online/awesome-codex-plugins">Copy</button></li></ul><p>Then copy the skill's folder (<code>plugins/synchronicity-labs/skills/skills/lipsync</code>) into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Lipsync my clip scene3_actor.mp4 to the re-recorded line in take2.wav. The speech is a bit longer than the video, so use bounce. Show me the cost estimate before you start.</p><p>Claude saves both files as sync. assets, checks input quality (for example several faces or music under the voice), and quotes the estimate using the sync-3 model. After you approve, it creates the lipsync job, waits for it to finish, and gives you the output MP4 URL. In a shell it can also offer to download the file next to the source.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Video and speech inputs] --&gt; B[Save as sync assets and check quality]
+B --&gt; C{Script instead of audio?}
+C --&gt;|Yes| D[Pick a voice from voices_list]
+C --&gt;|No| E[Choose length mode and speaker]
+D --&gt; E
+E --&gt; F[Estimate cost]
+F --&gt; G[User confirms]
+G --&gt; H[lipsync_create with sync-3]
+H --&gt; I[Wait for generation status]
+I --&gt; J[Deliver output MP4 URL]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

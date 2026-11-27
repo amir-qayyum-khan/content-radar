@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>short-drama: Content Radar</title><meta name="description" content="Chinese skill that guides a 50-100 episode micro-drama script from genre choice and characters to episode scripts and ex"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/story-script/">Story &amp; Script</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>short-drama</h1><p class="line">Chinese skill that guides a 50-100 episode micro-drama script from genre choice and characters to episode scripts and ex</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/story-script/">Story &amp; Script</a><span class="tag">Micro drama</span><span class="tag">MIT</span><span class="tag">Updated 7mo ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/0xsline/short-drama" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 1.7k</span><span>GitHub stars</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>Short-drama is a Claude Code skill that guides you through writing a full 50-100 episode micro-drama script using slash commands. It covers genre selection, story plan, characters, episode outline, episode scripts, quality review, export, an overseas (English) mode and a compliance check. Progress is saved in project files and a state file, so work resumes across sessions.</p><h2>Where it fits your pipeline</h2><p>It slots into step 1 and 2 (idea to story, story to episodes), before reference images and Kling. It targets the slow, robotic story problem with opening rules for hooking in the first 30 seconds, a rhythm curve, a payoff (satisfaction) matrix, paywall cliffhanger placement and per-episode hook design. /review gives an automated script quality score that can cut manual review of the writing. Episodes are written as 800+ character scripts, so you would need to condense them to fit 1-minute episodes. The README does not mention any Kling or ffmpeg output.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>git clone https://github.com/0xsline/short-drama</code><button type="button" class="copy" data-copy="git clone https://github.com/0xsline/short-drama">Copy</button></li></ul><p>Then copy the skill's folder into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">/start  (then pick genres such as revenge plus hidden-identity, choose tone, ending and episode count, then run /plan, /characters, /outline, and /episode 1)</p><p>Saved files in your project: creative-plan.md, characters.md, episode-directory.md, and episodes/ep001.md and so on. Each episode has 3-5 scenes, shot-type cues, tagged dialogue and an ending cliffhanger. /review scores each episode on a 50-point scale, and /export produces one combined script file.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[/start: genre, audience, tone/] --&gt; B[/plan: story skeleton and paywall points/]
+B --&gt; C[/characters: cast and villains/]
+C --&gt; D[/outline: episode directory/]
+D --&gt; E[/episode N: script with hook/]
+E --&gt; F[/review: score 1-10 per dimension/]
+F --&gt;|low score| E
+F --&gt;|pass| G[/export: full script file/]
+A -.-&gt; H[/overseas: English mode/]
+E -.-&gt; I[/compliance: domestic check/]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

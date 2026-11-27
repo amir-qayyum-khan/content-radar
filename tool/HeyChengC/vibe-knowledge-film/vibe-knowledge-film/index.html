@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>vibe-knowledge-film: Content Radar</title><meta name="description" content="No-narration 16:9 knowledge short: code-rendered frames, storyboard, on-screen visuals per subtitle, synthesized score."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/story-script/">Story &amp; Script</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>vibe-knowledge-film</h1><p class="line">No-narration 16:9 knowledge short: code-rendered frames, storyboard, on-screen visuals per subtitle, synthesized score.</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/story-script/">Story &amp; Script</a><a class="tag" href="/stage/visual-generation/">Visual Generation</a><a class="tag" href="/stage/music-sfx/">Music &amp; SFX</a><a class="tag" href="/stage/pacing-edit/">Pacing &amp; Edit</a><span class="tag">Documentary</span><span class="tag">Animation</span><span class="tag">Updated 2mo ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/HeyChengC/vibe-knowledge-film" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 1.6k</span><span>GitHub stars</span></div></header><p class="notice">⚠ Runs code on your machine. Read the source before installing.</p><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>This skill makes 2-5 minute, 16:9 wordless explainer shorts in the style of the Douyin &quot;Vibe knowledge&quot; videos. The viewer reads one subtitle line at the bottom while the screen acts out that sentence. It walks Claude through finding a familiar visual for each concept, writing a storyboard table, and rendering every frame from code (Canvas, Playwright, ffmpeg). It includes two looks, a render engine, and synthesized sound effects.</p><h2>Where it fits your pipeline</h2><p>It is an alternative to steps 1-4 for explainer-style content, not for drama. It takes a topic or script and produces a storyboard plus a finished wordless film. It does not feed Kling references or ffmpeg-joined clips. Its useful idea for micro-drama is the discipline of making every line visible on screen, with a hook in the first seconds and a stop-and-draw-or-hold rhythm. It is built for 16:9 explainers with no voice, so it fits knowledge shorts better than vertical micro-drama episodes.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>pip install -r requirements.txt</code><button type="button" class="copy" data-copy="pip install -r requirements.txt">Copy</button></li></ul><p>Then copy the skill's folder into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Make a vibe knowledge short about why cuckoo eggs fool other birds (supernormal stimuli). Find a familiar visual for each concept, write the storyboard table first, then build the first 30 seconds and show me stills.</p><p>A project folder with storyboard.md (one row per subtitle line), film.js, and a rendered 30-second head clip. Stills and contact sheets come first for review. The full renders/final.mp4 and a fact table with sources follow after the opening is approved.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Topic or script] --&gt; B[Thesis and fact table]
+B --&gt; C[Find a familiar visual per concept]
+C --&gt; D[Write storyboard table]
+D --&gt; E[Pick look B or C]
+E --&gt; F[Scaffold project with new_film.py]
+F --&gt; G[Build hardest shot, review stills]
+G --&gt; H[Render first 30s and revise]
+H --&gt; I[Full render and sound]
+I --&gt; J[Final check: muted, subtitles only]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

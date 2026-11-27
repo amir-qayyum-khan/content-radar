@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>motion-design-skill: Content Radar</title><meta name="description" content="Motion design principles for agents covering timing, easing and choreography across CSS, GSAP and Lottie."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/pacing-edit/">Pacing &amp; Edit</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>motion-design-skill</h1><p class="line">Motion design principles for agents covering timing, easing and choreography across CSS, GSAP and Lottie.</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/pacing-edit/">Pacing &amp; Edit</a><a class="tag" href="/stage/visual-generation/">Visual Generation</a><span class="tag">Animation</span><span class="tag">MIT</span><span class="tag">Updated 4d ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/LottieFiles/motion-design-skill" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 3.8k</span><span>GitHub stars</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>Motion Design Skill teaches an AI agent motion-direction principles: timing, easing, choreography and emotional intent. It includes a checklist, personality archetypes, duration and easing tables, and ready-made animation patterns. It is written for UI animation (CSS, Framer Motion, GSAP, Lottie), not live-action video or drama pacing. Rendered MP4 or GIF output needs a separate Creator MCP connection.</p><h2>Where it fits your pipeline</h2><p>It fits after step 5, when ffmpeg joins the clips, and only for graphic overlays: title cards, captions, end cards and animated stingers. It helps those elements feel deliberate, with better timing and easing. It does not address the main problem of slow, robotic story pacing, because it is built for UI animation and has no hooks, beat sheets or shot-cut guidance. It is a marginal fit for this pipeline.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>npx skills add LottieFiles/motion-design-skill</code><button type="button" class="copy" data-copy="npx skills add LottieFiles/motion-design-skill">Copy</button></li></ul><p>Then copy the skill's folder into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Design the motion for my episode title card and end-of-episode &#39;To be continued&#39; cliffhanger card. Use a tense personality, and give timing, easing and choreography for the text entrance, a quick glitch-style accent, and a hard cut-out.</p><p>A motion plan and animation code (for example CSS or GSAP) with durations, easing curves, stagger order and emotional rationale for each element. It is aimed at overlay graphics such as titles, lower thirds and end cards. It will not make the story paced faster or generate any video. Exporting to MP4 needs the separate Creator MCP.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Animation request] --&gt; B[Skill activates]
+B --&gt; C[Run 8-step motion checklist]
+C --&gt; D[Pick motion personality]
+D --&gt; E[Choose timing and easing]
+E --&gt; F[Apply pattern recipes]
+F --&gt; G[Generate animation code]
+G --&gt; H{Need rendered file?}
+H --&gt;|Yes| I[Creator MCP exports MP4 or GIF]
+H --&gt;|No| J[Use code in project]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>

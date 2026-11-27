@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>motion-skills: Content Radar</title><meta name="description" content="56 motion graphics skills covering kinetic type, charts, explainers, Reels, 3D, lower thirds and b-roll with render-and-"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap"><link rel="stylesheet" href="/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/_astro/Base.rwdadJZE.css"></head><body><header class="site-head"><div class="wrap"><a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a><nav class="site-nav" aria-label="Sections"><a href="/">Tools</a><a href="/news/">News</a></nav><div id="search" role="search"></div><span class="updated">Updated 27 Nov, 15:47 PKT</span></div></header><main><div class="wrap crumbs"><a href="/">All stages</a> / <a href="/stage/visual-generation/">Visual Generation</a></div><article class="wrap" data-pagefind-body><header class="tool-head"><div><h1>motion-skills</h1><p class="line">56 motion graphics skills covering kinetic type, charts, explainers, Reels, 3D, lower thirds and b-roll with render-and-</p><div class="shot-tags"><span class="tag">Skill</span><a class="tag" href="/stage/visual-generation/">Visual Generation</a><a class="tag" href="/stage/pacing-edit/">Pacing &amp; Edit</a><a class="tag" href="/stage/other/">Other video/audio</a><span class="tag">Animation</span><span class="tag">Reels &amp; shorts</span><span class="tag">MIT</span><span class="tag">Updated 9d ago</span></div><div class="links"><a class="btn btn--primary" href="https://github.com/iart-ai/motion-skills" rel="noopener">View source on GitHub</a></div></div><div class="tool-stats"><span class="big">★ 2.3k</span><span>GitHub stars</span></div></header><section class="costs" aria-labelledby="cost-h"><h2 id="cost-h">What it costs</h2><p>The README doesn&#39;t say what it costs.</p></section><div class="doc"><h2>What it does</h2><p>motion-skills is a collection of 56 open-source skills in 19 installable packs that teach AI coding agents to build motion graphics, animation and short video, including kinetic typography, data charts, TikTok/Reels clips, b-roll timed to speech, and transparent lower thirds. Each skill uses a render, screenshot and check loop with small helper scripts (freeze a frame, contact sheet, probe the MP4), so the agent inspects its own output. Video skills render through Remotion or Manim.</p><h2>Where it fits your pipeline</h2><p>Slots in after the ffmpeg join (step 5) as a finishing layer: it adds hook title cards, kinetic text, lower thirds and b-roll or overlays timed to the words. It does not write the story or generate Kling clips, so it will not fix slow story pacing on its own, but its frame-check loop can speed up reviewing the overlays it makes.</p><h2>Install</h2><ul class="cmds"><li class="cmd"><code>npx skills add iart-ai/tiktok-video-skills</code><button type="button" class="copy" data-copy="npx skills add iart-ai/tiktok-video-skills">Copy</button></li><li class="cmd"><code>/plugin marketplace add iart-ai/web-animation-skills</code><button type="button" class="copy" data-copy="/plugin marketplace add iart-ai/web-animation-skills">Copy</button></li></ul><p>Then copy the skill's folder into <code>~/.claude/skills/</code>.</p><h2>How to use</h2><p class="prompt">Make a 9:16 vertical title card and kinetic typography opener for my micro-drama episode, with a punchy 2-second hook line, then render it and check a few frames.</p><p>A Remotion-based project that renders an MP4 of animated text with timing and easing. The agent freezes frames or builds a contact sheet to check safe areas and legibility, then fixes problems it finds.</p><section data-flow-section><h2>How it works</h2><figure class="flow" data-flow aria-label="How it works, as a flowchart"><pre class="flow-src">flowchart TD
+A[Install a pack] --&gt; B[Skill auto-activates on matching prompt]
+B --&gt; C[Agent follows the motion workflow]
+C --&gt; D[Build with Remotion or Manim]
+D --&gt; E[Render MP4]
+E --&gt; F[Freeze frame or contact sheet]
+F --&gt; G{Looks right?}
+G --&gt;|No| C
+G --&gt;|Yes| H[Deliver video]</pre></figure><script type="module">
+  const figs = [...document.querySelectorAll('[data-flow]')];
+  if (figs.length) {
+    try {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs');
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral', fontFamily: 'Atkinson Hyperlegible, sans-serif' });
+      let i = 0;
+      for (const fig of figs) {
+        const src = fig.querySelector('.flow-src')?.textContent ?? '';
+        try {
+          const { svg } = await mermaid.render(`flow-${i++}`, src);
+          fig.innerHTML = svg; // Mermaid output, sanitized under securityLevel 'strict'
+        } catch {
+          fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+        }
+      }
+    } catch {
+      for (const fig of figs) fig.closest('[data-flow-section]')?.remove() ?? fig.remove();
+    }
+  }
+</script></section></div></article><script type="module">for(let e of document.querySelectorAll(`[data-copy]`))e.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.dataset.copy??``),e.textContent=`Copied`,setTimeout(()=>e.textContent=`Copy`,1500)});</script></main><footer class="site-foot"><div class="wrap">Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.</div></footer><script src="/pagefind/pagefind-ui.js"></script><script>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script></body></html>
