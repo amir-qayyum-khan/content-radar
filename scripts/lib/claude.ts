@@ -22,6 +22,7 @@ const defaultExec: Exec = (args, stdin, cwd) =>
     child.stderr.on('data', (d) => (stderr += d));
     child.on('error', (e) => { clearTimeout(timer); reject(e); });
     child.on('close', (code) => { clearTimeout(timer); resolve({ code: code ?? 1, stdout, stderr }); });
+    child.stdin.on('error', () => {}); // CLI may exit before reading (bad args, limit); close handles it
     child.stdin.end(stdin);
   });
 

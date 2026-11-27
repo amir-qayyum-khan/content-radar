@@ -27,7 +27,38 @@ describe('nightly', () => {
   it('runs every step in order and publishes', async () => {
     const { d, calls } = deps();
     expect(await nightly({ backfill: false, deps: d, today: '2026-11-27' })).toEqual({ ok: true, published: true });
-    expect(calls).toEqual(['collect', 'enrich', 'classify:200', 'write:60', 'saveEntries', 'snapshot:{"o/r":7}', 'saveRaw', 'build', 'publish', 'commitData']);
+    expect(calls).toEqual(['collect', 'enrich', 'saveEntries', 'classify:200', 'write:60', 'saveEntries', 'snapshot:{"o/r":7}', 'saveRaw', 'build', 'publish', 'commitData']);
+  });
+
+  it('stops before saving or publishing when collect finds nothing', async () => {
+    const { d, calls } = deps({ collect: async () => { calls.push('collect'); return []; } });
+    expect((await nightly({ backfill: false, deps: d, today: '2026-11-27' })).published).toBe(false);
+    expect(calls).not.toContain('saveEntries');
+    expect(calls).not.toContain('publish');
+    expect(calls.some((c) => c.startsWith('notify:'))).toBe(true);
+  });
+
+  it('stops before saving when the tool count falls below half of last run', async () => {
+    const prev: Record<string, any> = {};
+    for (let i = 0; i < 10; i++) prev[`o/r/t${i}`] = makeEntry({ id: `o/r/t${i}` });
+    const { d, calls } = deps({ loadEntries: () => prev });
+    expect((await nightly({ backfill: false, deps: d, today: '2026-11-27' })).published).toBe(false);
+    expect(calls).not.toContain('saveEntries');
+  });
+
+  it('saves after enrich and passes a checkpoint to classify and write', async () => {
+    const { d, calls } = deps({
+      classify: async (_e, o) => { calls.push('classify'); o.checkpoint?.(); return { done: 1, stoppedByLimit: false }; },
+      write: async (_e, o) => { calls.push('write'); o.checkpoint?.(); return { done: 1, stoppedByLimit: false }; },
+    });
+    await nightly({ backfill: false, deps: d, today: '2026-11-27' });
+    expect(calls.slice(0, 7)).toEqual(['collect', 'enrich', 'saveEntries', 'classify', 'saveEntries', 'write', 'saveEntries']);
+  });
+
+  it('reports a failed save instead of crashing', async () => {
+    const { d, calls } = deps({ saveSnapshot: () => { throw new Error('disk full'); } });
+    expect((await nightly({ backfill: false, deps: d, today: '2026-11-27' })).ok).toBe(false);
+    expect(calls.some((c) => c.includes('disk full'))).toBe(true);
   });
 
   it('still publishes when the usage limit is hit', async () => {

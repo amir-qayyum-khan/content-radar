@@ -36,6 +36,23 @@ describe('enrich', () => {
     expect(Object.keys(out)).toHaveLength(1);
   });
 
+  it('keeps entries the search missed tonight, with their work and firstSeen', async () => {
+    const old = makeEntry({ id: 'x/y/cutter', repo: 'x/y', firstSeen: '2026-11-01', lastSeen: '2026-11-26', classification: { relevant: true, confidence: 1, stages: ['pacing-edit'], contentTypes: [], oneLiner: 'x', maybe: false, hash: 'h' } });
+    const out = await enrich([skill('')], fakeGh().gh, { 'x/y/cutter': old }, TODAY);
+    expect(out['x/y/cutter']).toEqual(old);
+  });
+
+  it('drops entries unseen for more than 14 days', async () => {
+    const old = makeEntry({ id: 'x/y/cutter', repo: 'x/y', lastSeen: '2026-11-10' });
+    const out = await enrich([], fakeGh().gh, { 'x/y/cutter': old }, TODAY);
+    expect(out['x/y/cutter']).toBeUndefined();
+  });
+
+  it('stamps lastSeen on entries found tonight', async () => {
+    const out = await enrich([skill('')], fakeGh().gh, {}, TODAY);
+    expect(Object.values(out)[0].lastSeen).toBe(TODAY);
+  });
+
   it('keeps last run entries for a repo when GitHub fails (rate limit)', async () => {
     const old = makeEntry({ id: 'o/r/r', repo: 'o/r', path: '', firstSeen: '2026-11-01' });
     const { gh } = fakeGh();

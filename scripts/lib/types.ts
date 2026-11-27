@@ -18,7 +18,7 @@ export type ContentType = typeof CONTENT_TYPES[number];
 export const COST_LABELS = ['free', 'needs-paid-service', 'freemium', 'paid', 'unknown'] as const;
 export type CostLabel = typeof COST_LABELS[number];
 
-export const CAPS = { write: 60, classify: 200, classifyBatch: 10, digestChars: 6000, maybeBelow: 0.6, staleDays: 365 };
+export const CAPS = { write: 60, classify: 200, classifyBatch: 10, digestChars: 6000, maybeBelow: 0.6, staleDays: 365, unseenDays: 14 };
 
 /** `hint`: name/description text from the source, used to skip unrelated tools before any GitHub call. */
 export interface Candidate { repo: string; kind: 'skill' | 'plugin'; path: string; sourceName: string; hint?: string }
@@ -41,6 +41,8 @@ export interface Detail {
 export interface Entry {
   id: string; repo: string; kind: 'skill' | 'plugin'; path: string; name: string; slug: string;
   skills: string[]; hasCode: boolean; repoEntryCount: number; firstSeen: string; stale: boolean;
+  /** PKT date the search last returned it; entries unseen for CAPS.unseenDays are dropped. */
+  lastSeen?: string;
   stars: number; license: string | null; pushedAt: string; inputHash: string; digest: string;
   installCandidates: string[]; costEvidence: string[];
   /** README + SKILL.md text, used to check install commands appear verbatim. */

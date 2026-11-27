@@ -25,18 +25,20 @@ export function isSafeFlowchart(src: string): boolean {
 
 function checkCost(raw: z.infer<typeof schema>['cost'], e: Entry): Detail['cost'] {
   const unknown: Detail['cost'] = { label: 'unknown', services: [], evidence: '' };
-  const quoted = raw.evidence.trim() !== '' && e.costEvidence.some((l) => l.includes(raw.evidence.trim()));
+  const ev = raw.evidence.trim();
+  // A real quote: most of one evidence line, not a fragment like "API".
+  const quoted = ev !== '' && e.costEvidence.some((l) => l.includes(ev) && ev.length >= 0.6 * l.trim().length);
   if (raw.evidence.trim() && !quoted) return unknown;
   if (raw.label === 'free' && !quoted && !e.license) return unknown;
   if (raw.label !== 'free' && raw.label !== 'unknown' && !quoted) return unknown;
-  return { label: raw.label, services: raw.services, evidence: quoted ? raw.evidence.trim() : '' };
+  return { label: raw.label, services: raw.services, evidence: quoted ? ev : '' };
 }
 
 function fallbackInstall(e: Entry): string[] {
   return e.kind === 'plugin' ? [`/plugin marketplace add ${e.repo}`] : [`git clone https://github.com/${e.repo}`];
 }
 
-export async function write(entries: Record<string, Entry>, opts: { cap: number; run?: typeof runClaude; log: (s: string) => void }): Promise<{ done: number; stoppedByLimit: boolean }> {
+export async function write(entries: Record<string, Entry>, opts: { cap: number; run?: typeof runClaude; log: (s: string) => void; checkpoint?: () => void }): Promise<{ done: number; stoppedByLimit: boolean }> {
   const run = opts.run ?? runClaude;
   const work = Object.values(entries)
     .filter((e) => e.classification?.relevant && (!e.detail || e.detail.hash !== e.inputHash))
@@ -78,6 +80,7 @@ export async function write(entries: Record<string, Entry>, opts: { cap: number;
       hash: e.inputHash,
     };
     done++;
+    opts.checkpoint?.();
   }
   opts.log(`write: ${done} written`);
   return { done, stoppedByLimit: false };

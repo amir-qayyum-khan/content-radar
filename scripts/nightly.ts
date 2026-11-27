@@ -12,7 +12,7 @@ import { classify } from './classify.ts';
 import { write } from './write.ts';
 import { publish } from './publish.ts';
 
-type Step = (e: Record<string, Entry>, o: { cap: number; log: (s: string) => void }) => Promise<{ done: number; stoppedByLimit: boolean }>;
+type Step = (e: Record<string, Entry>, o: { cap: number; log: (s: string) => void; checkpoint?: () => void }) => Promise<{ done: number; stoppedByLimit: boolean }>;
 
 export interface Deps {
   collect: () => Promise<Candidate[]>;
@@ -77,19 +77,28 @@ export async function nightly(opts: { backfill: boolean; deps?: Partial<Deps>; t
     d.log(`nightly ${today} start${opts.backfill ? ' (backfill)' : ''}`);
     cands = await d.collect();
     d.log(`collect: ${cands.length} candidates`);
-    entries = await d.enrich(cands, d.loadEntries(), today);
-    d.log(`enrich: ${Object.keys(entries).length} entries`);
+    if (cands.length === 0) throw new Error('search returned nothing (token or GitHub problem?)');
+    const prev = d.loadEntries();
+    entries = await d.enrich(cands, prev, today);
+    const before = Object.keys(prev).length;
+    const after = Object.keys(entries).length;
+    d.log(`enrich: ${after} entries`);
+    // Guard against a partial outage wiping the list: keep yesterday's data and site.
+    if (after < before / 2) throw new Error(`only ${after} tools found vs ${before} last run`);
   } catch (e) { fail('collect', e); return { ok: false, published: false }; }
 
-  // A usage limit is not a failure: keep what finished and still publish.
-  const c = await d.classify(entries, { cap: caps.classify, log: d.log });
-  if (!c.stoppedByLimit) await d.write(entries, { cap: caps.write, log: d.log });
-
-  d.saveEntries(entries);
-  const stars: Record<string, number> = {};
-  for (const e of Object.values(entries)) stars[e.repo] = e.stars;
-  d.saveSnapshot(today, stars);
-  d.saveRaw(today, cands);
+  try {
+    const checkpoint = () => d.saveEntries(entries);
+    checkpoint(); // the run can be killed later; never lose the enrich work
+    // A usage limit is not a failure: keep what finished and still publish.
+    const c = await d.classify(entries, { cap: caps.classify, log: d.log, checkpoint });
+    if (!c.stoppedByLimit) await d.write(entries, { cap: caps.write, log: d.log, checkpoint });
+    checkpoint();
+    const stars: Record<string, number> = {};
+    for (const e of Object.values(entries)) stars[e.repo] = e.stars;
+    d.saveSnapshot(today, stars);
+    d.saveRaw(today, cands);
+  } catch (e) { fail('save', e); return { ok: false, published: false }; }
 
   let published = false;
   try {

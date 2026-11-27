@@ -63,3 +63,15 @@ describe('runClaude', () => {
     expect(await runClaude({ model: 'sonnet', system: 's', prompt: 'p', schema, exec })).toEqual({ x: 3 });
   });
 });
+
+describe('runClaude real spawn (review M1)', () => {
+  it('survives the CLI exiting before reading a large prompt', async () => {
+    const prev = process.env.CLAUDE_BIN;
+    process.env.CLAUDE_BIN = process.execPath; // node exits at once on the unknown flags
+    try {
+      await expect(runClaude({ model: 'haiku', system: 's', prompt: 'x'.repeat(4_000_000), schema: z.object({ ok: z.boolean() }) })).rejects.toThrow(/invalid output/);
+    } finally {
+      if (prev === undefined) delete process.env.CLAUDE_BIN; else process.env.CLAUDE_BIN = prev;
+    }
+  });
+});

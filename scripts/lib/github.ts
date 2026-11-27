@@ -22,7 +22,10 @@ export function createGitHub(opts: { token?: string; fetch?: typeof fetch; sleep
       const res = await doFetch(API + path, { headers });
       if (res.ok) return res;
       if (res.status === 404) return null;
-      if ((res.status === 403 || res.status === 429) && attempt < 2) {
+      // Bad token or outage: fail loudly so the run stops instead of publishing an empty site.
+      if (res.status === 401 || res.status >= 500) throw new Error(`github: ${res.status} for ${path.split('?')[0]}`);
+      const limited = res.status === 429 || res.headers.has('retry-after') || res.headers.get('x-ratelimit-remaining') === '0';
+      if (limited && attempt < 2) {
         const retryAfter = Number(res.headers.get('retry-after'));
         const reset = Number(res.headers.get('x-ratelimit-reset'));
         const wait = retryAfter > 0 ? retryAfter * 1000 : reset > 0 ? reset * 1000 - Date.now() : 5_000;

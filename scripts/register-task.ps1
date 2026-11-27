@@ -8,7 +8,7 @@ $action = New-ScheduledTaskAction -Execute 'cmd.exe' `
   -Argument "/c cd /d `"$project`" && npm run nightly >> logs\scheduler.log 2>&1"
 $trigger = New-ScheduledTaskTrigger -Daily -At 4:00am
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun `
-  -ExecutionTimeLimit (New-TimeSpan -Hours 3) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+  -ExecutionTimeLimit (New-TimeSpan -Hours 8) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 # Runs as you, only while you're signed in, so Claude Code's login and your env vars are available.
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 

@@ -52,6 +52,23 @@ describe('github client', () => {
     expect(Math.max(...s.waits)).toBeLessThanOrEqual(65 * 60_000);
   });
 
+  it('throws on 401 (bad or missing token) instead of returning nothing', async () => {
+    const { f } = fakeFetch(() => ({ status: 401, body: { message: 'Bad credentials' } }));
+    await expect(createGitHub({ token: 't', fetch: f, sleep: noSleep().sleep }).searchCode('q', 1)).rejects.toThrow(/401/);
+  });
+
+  it('throws on a GitHub outage (5xx)', async () => {
+    const { f } = fakeFetch(() => ({ status: 502 }));
+    await expect(createGitHub({ token: 't', fetch: f, sleep: noSleep().sleep }).getReadme('o/r')).rejects.toThrow(/502/);
+  });
+
+  it('does not wait on a 403 that is not a rate limit', async () => {
+    const { f } = fakeFetch(() => ({ status: 403, headers: { 'x-ratelimit-remaining': '4000' }, body: { message: 'blocked' } }));
+    const s = noSleep();
+    expect(await createGitHub({ token: 't', fetch: f, sleep: s.sleep }).listDir('o/r', '')).toEqual([]);
+    expect(s.waits).toEqual([]);
+  });
+
   it('getReadme returns empty string on 404', async () => {
     const { f } = fakeFetch(() => ({ status: 404, body: { message: 'Not Found' } }));
     expect(await createGitHub({ token: 't', fetch: f, sleep: noSleep().sleep }).getReadme('o/r')).toBe('');

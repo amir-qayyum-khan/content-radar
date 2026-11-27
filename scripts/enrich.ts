@@ -94,13 +94,19 @@ export async function enrich(cands: Candidate[], gh: GitHub, prev: Record<string
         id, repo, kind: c.kind, path: c.path, slug,
         name: files.name, skills: files.skills, hasCode: files.hasCode, digest: files.digest,
         installCandidates: files.installCandidates, costEvidence: files.costEvidence, readmeText: files.readmeText, inputHash: files.inputHash,
-        repoEntryCount: 0, firstSeen: before?.firstSeen ?? today,
+        repoEntryCount: 0, firstSeen: before?.firstSeen ?? today, lastSeen: today,
         stale: new Date(stats.pushedAt).getTime() < staleBefore,
         stars: stats.stars, license: stats.license, pushedAt: stats.pushedAt,
         classification: before?.classification, detail: before?.detail,
       });
     }
     for (const m of made) out[m.id] = { ...m, repoEntryCount: made.length };
+  }
+  // Search results shift nightly; keep what we missed (with its LLM work) until unseen for unseenDays.
+  const dropBefore = new Date(today).getTime() - CAPS.unseenDays * 86_400_000;
+  for (const p of prevList) {
+    if (out[p.id] || Object.values(out).some((o) => o.repo === p.repo && o.path === p.path && o.kind === p.kind)) continue;
+    if (new Date(p.lastSeen ?? p.firstSeen).getTime() >= dropBefore) out[p.id] = p;
   }
   return out;
 }

@@ -17,7 +17,7 @@ function fakeRun(out: Record<string, unknown> = {}) {
     calls.push(prompt);
     return {
       summary: 'Cuts reels.', install: ['/plugin marketplace add owner/repo'], usage: { prompt: 'cut it', expect: 'a reel' },
-      pipelineFit: 'After step 4.', cost: { label: 'needs-paid-service', services: ['Kling'], evidence: 'KLING_API_KEY' },
+      pipelineFit: 'After step 4.', cost: { label: 'needs-paid-service', services: ['Kling'], evidence: 'Requires KLING_API_KEY' },
       flowchart: 'flowchart TD\n  A[Clips] --> B[Cut]', ...out,
     };
   }) as any;
@@ -57,6 +57,18 @@ describe('write', () => {
     const e = one();
     await write(e, { cap: 60, run: fakeRun({ cost: { label: 'paid', services: [], evidence: 'made up text' } }).run, log });
     expect(e['owner/repo/tool'].detail?.cost).toEqual({ label: 'unknown', services: [], evidence: '' });
+  });
+
+  it('rejects a short fragment as evidence (review I6)', async () => {
+    const e = one({ costEvidence: ['Set your OpenAI API key in the config before running the pipeline'] });
+    await write(e, { cap: 60, run: fakeRun({ cost: { label: 'paid', services: [], evidence: 'API' } }).run, log });
+    expect(e['owner/repo/tool'].detail?.cost.label).toBe('unknown');
+  });
+
+  it('calls checkpoint after each written page', async () => {
+    let n = 0;
+    await write(one(), { cap: 60, run: fakeRun().run, log, checkpoint: () => { n++; } });
+    expect(n).toBe(1);
   });
 
   it('rejects an unsafe flowchart', async () => {

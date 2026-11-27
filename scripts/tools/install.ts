@@ -1,13 +1,14 @@
 const CANDIDATE = /^(\/plugin\s|npx\s|npm\s+(i|install)\s|pip\s+install\s|pipx\s+install\s|uv\s+tool\s+install\s|git\s+clone\s|cp\s|xcopy\s|Copy-Item\s|curl\s|wget\s)/;
 
 const ALLOWED = [
-  /^\/plugin marketplace add \S+$/,
-  /^\/plugin install \S+$/,
-  /^git clone https:\/\/github\.com\/\S+$/,
+  /^\/plugin marketplace add [\w.-]+\/[\w.-]+$/,
+  /^\/plugin install [\w.@-]+$/,
+  /^git clone https:\/\/github\.com\/[\w.-]+\/[\w.-]+?(\.git)?$/,
   /^(npx|npm i|npm install|pip install|pipx install|uv tool install) [\w@./:-]+( [\w@./:=-]+)*$/,
-  /^(cp|xcopy|Copy-Item) .*\.claude[\\/]skills/,
+  /^(cp -r|cp -R|xcopy \/e|Copy-Item -Recurse) [\w./~\\-]+ ~?[\w./\\-]*\.claude[\\/]skills[\w./\\-]*$/,
 ];
-const FORBIDDEN = /[|;`]|&&|\$\(|\bcurl\b|\bwget\b|\biex\b|\bsudo\b|Invoke-Expression/i;
+// Anything a shell could treat as a second command, redirect, expansion or subexpression.
+const FORBIDDEN = /[|;`&<>(){}$]|\bcurl\b|\bwget\b|\biex\b|\bsudo\b|Invoke-Expression/i;
 
 /** Lines in the README that look like install commands, verbatim, de-duplicated. */
 export function extractInstall(md: string): string[] {

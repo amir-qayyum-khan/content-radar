@@ -42,13 +42,27 @@ describe('classify', () => {
     expect(calls).toHaveLength(1);
   });
 
-  it('drops irrelevant entries and flags low confidence as maybe', async () => {
+  it('remembers irrelevant entries and flags low confidence as maybe', async () => {
     const { run } = fakeRun((id) => (id === 'o/r/t0' ? { relevant: false } : id === 'o/r/t1' ? { confidence: 0.4 } : {}));
     const e = entries(3);
     await classify(e, { cap: 200, run, log });
-    expect(e['o/r/t0']).toBeUndefined();
+    expect(e['o/r/t0'].classification).toMatchObject({ relevant: false, hash: 'h0' });
     expect(e['o/r/t1'].classification?.maybe).toBe(true);
     expect(e['o/r/t2'].classification?.maybe).toBe(false);
+  });
+
+  it('does not re-classify a rejected entry whose hash is unchanged', async () => {
+    const e = entries(1);
+    e['o/r/t0'].classification = { relevant: false, confidence: 1, stages: ['other'], contentTypes: [], oneLiner: '', maybe: false, hash: 'h0' };
+    const { run, calls } = fakeRun();
+    await classify(e, { cap: 200, run, log });
+    expect(calls).toHaveLength(0);
+  });
+
+  it('calls checkpoint after each batch', async () => {
+    let n = 0;
+    await classify(entries(25), { cap: 200, run: fakeRun().run, log, checkpoint: () => { n++; } });
+    expect(n).toBe(3);
   });
 
   it('skips entries whose hash is unchanged', async () => {

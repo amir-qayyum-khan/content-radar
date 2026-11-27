@@ -20,7 +20,7 @@ export function queueOrder(a: Entry, b: Entry): number {
   return Number(a.stale) - Number(b.stale) || b.stars - a.stars;
 }
 
-export async function classify(entries: Record<string, Entry>, opts: { cap: number; run?: typeof runClaude; log: (s: string) => void }): Promise<{ done: number; stoppedByLimit: boolean }> {
+export async function classify(entries: Record<string, Entry>, opts: { cap: number; run?: typeof runClaude; log: (s: string) => void; checkpoint?: () => void }): Promise<{ done: number; stoppedByLimit: boolean }> {
   const run = opts.run ?? runClaude;
   const work = Object.values(entries)
     .filter((e) => !e.classification || e.classification.hash !== e.inputHash)
@@ -42,9 +42,9 @@ export async function classify(entries: Record<string, Entry>, opts: { cap: numb
     const sent = new Set(batch.map((e) => e.id));
     for (const it of res.items) {
       if (!sent.has(it.id) || !entries[it.id]) continue;
-      if (!it.relevant) { delete entries[it.id]; done++; continue; }
+      // Kept as relevant:false so the same tool isn't re-classified every night; rank hides it.
       entries[it.id].classification = {
-        relevant: true,
+        relevant: it.relevant,
         confidence: it.confidence,
         stages: it.stages.length ? [...new Set(it.stages)] : ['other'],
         contentTypes: [...new Set(it.contentTypes)],
@@ -54,6 +54,7 @@ export async function classify(entries: Record<string, Entry>, opts: { cap: numb
       };
       done++;
     }
+    opts.checkpoint?.();
   }
   opts.log(`classify: ${done} classified`);
   return { done, stoppedByLimit: false };
