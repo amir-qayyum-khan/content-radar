@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import Shot from '../../components/Shot.astro';
+import Filters from '../../components/Filters.astro';
+import { STAGES, STAGE_LABELS, type Stage } from '../../../scripts/lib/types.ts';
+import { getSiteData, STAGE_WHY } from '../../lib/data.ts';
+
+export function getStaticPaths() {
+  return STAGES.map((slug) => ({ params: { slug } }));
+}
+
+const slug = Astro.params.slug as Stage;
+const list = getSiteData().byStage[slug];
+const label = STAGE_LABELS[slug];
+---
+<Base title={`${label}: Content Radar`} description={`Claude skills and plugins for ${label.toLowerCase()}. ${STAGE_WHY[slug]}`}>
+  <div class="wrap crumbs"><a href="/">All stages</a></div>
+  <div class="wrap intro">
+    <h1>{label}</h1>
+    <p>{STAGE_WHY[slug]} {list.length} tools.</p>
+  </div>
+  <Filters />
+  <section class="block wrap" aria-label={`${label} tools`}>
+    {list.length === 0
+      ? <p class="empty">Nothing here yet. New tools are checked every morning.</p>
+      : <ul class="shots" data-list>{list.map((r, i) => <Shot r={r} i={i} />)}</ul>}
+    <p class="empty" data-empty hidden>No tools match your filters.</p>
+  </section>
+</Base>

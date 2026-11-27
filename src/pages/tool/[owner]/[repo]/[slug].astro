@@ -1,0 +1,112 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import CostBadge from '../../../../components/CostBadge.astro';
+import Flowchart from '../../../../components/Flowchart.astro';
+import Sparkline from '../../../../components/Sparkline.astro';
+import { STAGE_LABELS } from '../../../../../scripts/lib/types.ts';
+import { getSiteData, ago, fmtNum, sparkPoints, TYPE_TEXT, type Ranked } from '../../../../lib/data.ts';
+
+export function getStaticPaths() {
+  return getSiteData().all.map((r) => {
+    const [owner, repo, slug] = r.id.split('/');
+    return { params: { owner, repo, slug }, props: { r } };
+  });
+}
+
+const { r } = Astro.props as { r: Ranked };
+const { history, today } = getSiteData();
+const c = r.classification!;
+const d = r.detail;
+const gh = `https://github.com/${r.repo}${r.path ? `/tree/HEAD/${r.path}` : ''}`;
+const points = sparkPoints(history, r.repo);
+const stages = c.maybe ? ['other' as const] : c.stages;
+---
+<Base title={`${r.name}: Content Radar`} description={c.oneLiner}>
+  <div class="wrap crumbs"><a href="/">All stages</a> / <a href={`/stage/${stages[0]}/`}>{STAGE_LABELS[stages[0]]}</a></div>
+  <article class="wrap" data-pagefind-body>
+    <header class="tool-head">
+      <div>
+        <h1>{r.name}</h1>
+        <p class="line">{c.oneLiner}</p>
+        <div class="shot-tags">
+          {r.isNew && <span class="tag tag--new">New</span>}
+          <CostBadge label={d?.cost.label ?? 'unknown'} />
+          <span class="tag">{r.kind === 'plugin' ? 'Plugin' : 'Skill'}</span>
+          {stages.map((s) => <a class="tag" href={`/stage/${s}/`}>{STAGE_LABELS[s]}</a>)}
+          {c.contentTypes.map((t) => <span class="tag">{TYPE_TEXT[t]}</span>)}
+          {r.license && <span class="tag">{r.license}</span>}
+          <span class="tag">Updated {ago(r.pushedAt, today)}</span>
+          {r.stale && <span class="tag">No updates in a year</span>}
+        </div>
+        <div class="links">
+          <a class="btn btn--primary" href={gh} rel="noopener">View source on GitHub</a>
+        </div>
+      </div>
+      <div class="tool-stats">
+        <span class="big">★ {fmtNum(r.stars)}</span>
+        <span>{r.repoEntryCount > 1 ? 'stars for the whole repository' : 'GitHub stars'}</span>
+        {r.trend7d !== 0 && <span class="trend">{r.trend7d > 0 ? '+' : ''}{fmtNum(r.trend7d)} this week</span>}
+        <Sparkline points={points} />
+      </div>
+    </header>
+
+    {r.hasCode && <p class="notice">⚠ Runs code on your machine. Read the source before installing.</p>}
+    {d && (
+      <p class="costline">
+        <strong>Cost: </strong>{d.cost.label === 'unknown' ? 'The README doesn\'t say clearly.' : <CostBadge label={d.cost.label} />}
+        {d.cost.services.length > 0 && <span> Needs {d.cost.services.join(', ')}.</span>}
+        {d.cost.evidence && <span> From the README: <q>{d.cost.evidence}</q></span>}
+      </p>
+    )}
+
+    <div class="doc">
+      {d ? (
+        <>
+          <h2>What it does</h2>
+          <p>{d.summary}</p>
+
+          <h2>Where it fits your pipeline</h2>
+          <p>{d.pipelineFit}</p>
+
+          <h2>Install</h2>
+          <ul class="cmds">
+            {d.install.map((cmd) => (
+              <li class="cmd"><code>{cmd}</code><button type="button" class="copy" data-copy={cmd}>Copy</button></li>
+            ))}
+          </ul>
+          {r.kind === 'skill' && <p>Then copy the skill's folder{r.path && <> (<code>{r.path}</code>)</>} into <code>~/.claude/skills/</code>.</p>}
+
+          <h2>How to use</h2>
+          <p class="prompt">{d.usage.prompt}</p>
+          <p>{d.usage.expect}</p>
+
+          {d.flowchart && (
+            <section data-flow-section>
+              <h2>How it works</h2>
+              <Flowchart src={d.flowchart} />
+            </section>
+          )}
+        </>
+      ) : (
+        <p class="soon">Full guide coming soon. Until it's written, check the README on GitHub for install steps.</p>
+      )}
+
+      {r.skills.length > 0 && (
+        <>
+          <h2>Skills in this plugin</h2>
+          <ul class="skills">{r.skills.map((s) => <li>{s}</li>)}</ul>
+        </>
+      )}
+    </div>
+  </article>
+
+  <script>
+    for (const b of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+      b.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(b.dataset.copy ?? '');
+        b.textContent = 'Copied';
+        setTimeout(() => (b.textContent = 'Copy'), 1500);
+      });
+    }
+  </script>
+</Base>

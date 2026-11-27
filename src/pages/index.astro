@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import Shot from '../components/Shot.astro';
+import Filters from '../components/Filters.astro';
+import CostBadge from '../components/CostBadge.astro';
+import { STAGES, STAGE_LABELS } from '../../scripts/lib/types.ts';
+import { getSiteData, STAGE_WHY, costOf, fmtNum, toolUrl } from '../lib/data.ts';
+
+const { byStage, newThisWeek, all } = getSiteData();
+const TOP = 6;
+---
+<Base title="Content Radar: Claude skills for video and audio creators" description="Daily list of Claude skills and plugins for micro drama, reels, cinematic video, animation and audio, ranked by where they fit in a production pipeline.">
+  <div class="wrap intro">
+    <h1>Tools that fix your story first</h1>
+    <p>{all.length} Claude skills and plugins for video and audio, grouped by pipeline stage. Story and pacing tools come first, because that's where episodes lose viewers.</p>
+    <ol class="strip" aria-label="Pipeline stages">
+      {STAGES.map((s, i) => (
+        <li>
+          <a href={`#stage-${s}`}>
+            <span class="n">{i + 1}</span>
+            <span class="lbl">{STAGE_LABELS[s]}</span>
+            <span class="count">{byStage[s].length}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  {newThisWeek.length > 0 && (
+    <section class="block wrap" aria-labelledby="new-h">
+      <div class="block-head">
+        <h2 id="new-h">New this week</h2>
+        <p class="why">First spotted in the last 7 days, most stars first.</p>
+      </div>
+      <ul class="reel">
+        {newThisWeek.map((r) => (
+          <li>
+            <a href={toolUrl(r)}>
+              <span class="name">{r.name}</span>
+              <span class="line">{r.classification!.oneLiner}</span>
+              <span class="meta"><span>★ {fmtNum(r.stars)}</span><CostBadge label={costOf(r)} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <Filters />
+
+  {STAGES.map((s, si) => (
+    <section class="block wrap" id={`stage-${s}`} aria-labelledby={`h-${s}`}>
+      <div class="block-head">
+        <h2 id={`h-${s}`}>{si + 1}. {STAGE_LABELS[s]}</h2>
+        <p class="why">{STAGE_WHY[s]}</p>
+        {byStage[s].length > TOP && <a class="all" href={`/stage/${s}/`}>See all {byStage[s].length}</a>}
+      </div>
+      {byStage[s].length === 0
+        ? <p class="empty">Nothing here yet. New tools are checked every morning.</p>
+        : <ul class="shots" data-list>{byStage[s].slice(0, TOP).map((r, i) => <Shot r={r} i={i} />)}</ul>}
+      <p class="empty" data-empty hidden>No tools here match your filters.</p>
+    </section>
+  ))}
+</Base>

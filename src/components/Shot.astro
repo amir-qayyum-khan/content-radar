@@ -1,0 +1,36 @@
+---
+import CostBadge from './CostBadge.astro';
+import { costOf, fmtNum, toolUrl, TYPE_TEXT, type Ranked } from '../lib/data.ts';
+
+interface Props { r: Ranked; i: number }
+const { r, i } = Astro.props;
+const c = r.classification!;
+---
+<li
+  class:list={['shot', { 'shot--stale': r.stale }]}
+  data-row
+  data-i={i}
+  data-types={c.contentTypes.join(' ')}
+  data-cost={costOf(r)}
+  data-stars={r.stars}
+  data-trend={r.trend7d}
+  data-seen={r.firstSeen}
+>
+  <a class="shot-main" href={toolUrl(r)}>
+    <span class="shot-name">{r.name}</span>
+    <span class="shot-line">{c.oneLiner}</span>
+  </a>
+  <div class="shot-stats">
+    <span title={r.repoEntryCount > 1 ? 'Stars for the whole repository' : 'GitHub stars'}>★ {fmtNum(r.stars)}{r.repoEntryCount > 1 && ' repo'}</span>
+    {r.trend7d > 0 && <span class="trend">+{fmtNum(r.trend7d)} this week</span>}
+  </div>
+  <div class="shot-tags">
+    {r.isNew && <span class="tag tag--new">New</span>}
+    <CostBadge label={costOf(r)} />
+    <span class="tag">{r.kind === 'plugin' ? 'Plugin' : 'Skill'}</span>
+    {c.contentTypes.map((t) => <span class="tag">{TYPE_TEXT[t]}</span>)}
+    {r.repoEntryCount > 1 && <span class="tag">Collection</span>}
+    {r.stale && <span class="tag">No updates in a year</span>}
+    {c.maybe && <span class="tag">Possibly related</span>}
+  </div>
+</li>

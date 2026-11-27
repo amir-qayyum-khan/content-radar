@@ -1,0 +1,176 @@
+{
+ "hookco/hooks/hook-writer": {
+  "id": "hookco/hooks/hook-writer",
+  "repo": "hookco/hooks",
+  "kind": "plugin",
+  "path": "",
+  "name": "Hook Writer",
+  "slug": "hook-writer",
+  "skills": [],
+  "hasCode": false,
+  "repoEntryCount": 1,
+  "firstSeen": "2026-11-25",
+  "stale": false,
+  "stars": 1200,
+  "license": "MIT",
+  "pushedAt": "2026-11-01T00:00:00Z",
+  "inputHash": "h",
+  "digest": "d",
+  "installCandidates": [],
+  "costEvidence": [],
+  "readmeText": "",
+  "classification": {
+   "relevant": true,
+   "confidence": 0.9,
+   "stages": [
+    "story-script"
+   ],
+   "contentTypes": [
+    "micro-drama"
+   ],
+   "oneLiner": "Writes hooks",
+   "maybe": false,
+   "hash": "h"
+  },
+  "detail": {
+   "summary": "Writes punchy hooks.",
+   "install": [
+    "/plugin marketplace add hookco/hooks"
+   ],
+   "usage": {
+    "prompt": "Give me 5 hooks",
+    "expect": "Five hooks"
+   },
+   "pipelineFit": "After step 1.",
+   "cost": {
+    "label": "free",
+    "services": [],
+    "evidence": "MIT licensed"
+   },
+   "flowchart": "flowchart TD\n  A[Idea] --> B[Hook]",
+   "hash": "h"
+  }
+ },
+ "evil/xss/bad": {
+  "id": "evil/xss/bad",
+  "repo": "evil/xss",
+  "kind": "skill",
+  "path": "",
+  "name": "Bad <b>name</b>",
+  "slug": "bad",
+  "skills": [],
+  "hasCode": false,
+  "repoEntryCount": 1,
+  "firstSeen": "2026-11-27",
+  "stale": false,
+  "stars": 5,
+  "license": "MIT",
+  "pushedAt": "2026-11-01T00:00:00Z",
+  "inputHash": "h",
+  "digest": "d",
+  "installCandidates": [],
+  "costEvidence": [],
+  "readmeText": "",
+  "classification": {
+   "relevant": true,
+   "confidence": 0.9,
+   "stages": [
+    "pacing-edit"
+   ],
+   "contentTypes": [
+    "micro-drama"
+   ],
+   "oneLiner": "<img src=x onerror=alert(1)>",
+   "maybe": false,
+   "hash": "h"
+  }
+ },
+ "old/repo/stale-tool": {
+  "id": "old/repo/stale-tool",
+  "repo": "old/repo",
+  "kind": "skill",
+  "path": "",
+  "name": "Stale Tool",
+  "slug": "stale-tool",
+  "skills": [],
+  "hasCode": false,
+  "repoEntryCount": 1,
+  "firstSeen": "2026-11-27",
+  "stale": true,
+  "stars": 50,
+  "license": "MIT",
+  "pushedAt": "2026-11-01T00:00:00Z",
+  "inputHash": "h",
+  "digest": "d",
+  "installCandidates": [],
+  "costEvidence": [],
+  "readmeText": "",
+  "classification": {
+   "relevant": true,
+   "confidence": 0.9,
+   "stages": [
+    "music-sfx"
+   ],
+   "contentTypes": [
+    "micro-drama"
+   ],
+   "oneLiner": "Writes hooks",
+   "maybe": false,
+   "hash": "h"
+  }
+ },
+ "code/runner/runner": {
+  "id": "code/runner/runner",
+  "repo": "code/runner",
+  "kind": "skill",
+  "path": "",
+  "name": "Runner",
+  "slug": "runner",
+  "skills": [],
+  "hasCode": true,
+  "repoEntryCount": 2,
+  "firstSeen": "2026-11-27",
+  "stale": false,
+  "stars": 80,
+  "license": "MIT",
+  "pushedAt": "2026-11-01T00:00:00Z",
+  "inputHash": "h",
+  "digest": "d",
+  "installCandidates": [],
+  "costEvidence": [],
+  "readmeText": "",
+  "classification": {
+   "relevant": true,
+   "confidence": 0.9,
+   "stages": [
+    "voice-emotion"
+   ],
+   "contentTypes": [
+    "micro-drama"
+   ],
+   "oneLiner": "Writes hooks",
+   "maybe": false,
+   "hash": "h"
+  },
+  "detail": {
+   "summary": "Writes punchy hooks.",
+   "install": [
+    "/plugin marketplace add hookco/hooks"
+   ],
+   "usage": {
+    "prompt": "Give me 5 hooks",
+    "expect": "Five hooks"
+   },
+   "pipelineFit": "After step 1.",
+   "cost": {
+    "label": "needs-paid-service",
+    "services": [
+     "ElevenLabs"
+    ],
+    "evidence": "ELEVENLABS_API_KEY"
+   },
+   "flowchart": null,
+   "hash": "h"
+  }
+ }
+}

@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+import { getSiteData } from '../lib/data.ts';
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+const { updated } = getSiteData();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23f2b544'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap" />
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  </head>
+  <body>
+    <header class="site-head">
+      <div class="wrap">
+        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a>
+        <div id="search" role="search"></div>
+        <span class="updated">Updated {updated}</span>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-foot">
+      <div class="wrap">
+        Claude skills and plugins for video and audio creators, refreshed every morning from public GitHub data. Read a tool's source before you install it.
+      </div>
+    </footer>
+    <script is:inline src="/pagefind/pagefind-ui.js"></script>
+    <script is:inline>
+      if (window.PagefindUI) new PagefindUI({ element: '#search', showSubResults: false, showImages: false, resetStyles: false, translations: { placeholder: 'Search tools' } });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+---
+import { CONTENT_TYPES } from '../../scripts/lib/types.ts';
+import { TYPE_TEXT } from '../lib/data.ts';
+---
+<div class="filters" aria-label="Filter and sort tools">
+  <div class="wrap">
+    <label>Sort
+      <select id="f-sort">
+        <option value="pipeline">Best fit first</option>
+        <option value="trending">Trending this week</option>
+        <option value="stars">Most stars</option>
+        <option value="newest">Newest</option>
+      </select>
+    </label>
+    <div class="types" role="group" aria-label="Content type">
+      {CONTENT_TYPES.map((t) => <button type="button" class="chip-btn" data-type={t} aria-pressed="false">{TYPE_TEXT[t]}</button>)}
+    </div>
+    <label><input type="checkbox" id="f-free" /> Free only</label>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const sortEl = document.getElementById('f-sort') as HTMLSelectElement;
+  const freeEl = document.getElementById('f-free') as HTMLInputElement;
+  const typeBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-type]')];
+  let type = params.get('type') ?? '';
+  sortEl.value = ['pipeline', 'trending', 'stars', 'newest'].includes(params.get('sort') ?? '') ? params.get('sort')! : 'pipeline';
+  freeEl.checked = params.get('cost') === 'free';
+
+  const key: Record<string, (el: HTMLElement) => number | string> = {
+    pipeline: (el) => -Number(el.dataset.i),
+    trending: (el) => Number(el.dataset.trend),
+    stars: (el) => Number(el.dataset.stars),
+    newest: (el) => el.dataset.seen ?? '',
+  };
+
+  function apply() {
+    for (const b of typeBtns) b.setAttribute('aria-pressed', String(b.dataset.type === type));
+    const sort = sortEl.value;
+    for (const list of document.querySelectorAll<HTMLElement>('[data-list]')) {
+      const rows = [...list.querySelectorAll<HTMLElement>('[data-row]')];
+      rows.sort((a, b) => { const ka = key[sort](a), kb = key[sort](b); return ka < kb ? 1 : ka > kb ? -1 : 0; });
+      let shown = 0;
+      for (const r of rows) {
+        const ok = (!type || (r.dataset.types ?? '').split(' ').includes(type)) && (!freeEl.checked || r.dataset.cost === 'free');
+        r.hidden = !ok;
+        if (ok) shown++;
+        list.appendChild(r);
+      }
+      const empty = list.parentElement?.querySelector<HTMLElement>('[data-empty]');
+      if (empty) empty.hidden = shown > 0 || rows.length === 0;
+    }
+    const q = new URLSearchParams();
+    if (sort !== 'pipeline') q.set('sort', sort);
+    if (type) q.set('type', type);
+    if (freeEl.checked) q.set('cost', 'free');
+    history.replaceState(null, '', q.size ? `?${q}` : location.pathname);
+  }
+
+  sortEl.addEventListener('change', apply);
+  freeEl.addEventListener('change', apply);
+  for (const b of typeBtns) b.addEventListener('click', () => { type = type === b.dataset.type ? '' : b.dataset.type!; apply(); });
+  apply();
+</script>

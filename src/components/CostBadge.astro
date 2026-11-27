@@ -1,0 +1,8 @@
+---
+import { COST_TEXT } from '../lib/data.ts';
+import type { CostLabel } from '../../scripts/lib/types.ts';
+
+interface Props { label: CostLabel }
+const { label } = Astro.props;
+---
+<span class={`tag cost cost--${label}`}>{COST_TEXT[label]}</span>
