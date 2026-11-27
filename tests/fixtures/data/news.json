@@ -1,0 +1,8 @@
+{
+ "updated": "2026-11-26T23:00:00.000Z",
+ "items": [
+  { "id": "hn-1", "title": "Sora 2 ships 60-second clips", "url": "https://example.com/sora", "source": "hn", "where": "Hacker News", "score": 320, "comments": 140, "commentsUrl": "https://news.ycombinator.com/item?id=1", "postedAt": "2026-11-25T10:00:00.000Z", "rank": 2 },
+  { "id": "reddit-a", "title": "<script>alert(1)</script> Sora", "url": "https://v.redd.it/a", "source": "reddit", "where": "r/aivideo", "score": 900, "comments": 40, "commentsUrl": "https://www.reddit.com/r/aivideo/comments/a/x/", "postedAt": "2026-11-26T08:00:00.000Z", "rank": 1 },
+  { "id": "hn-2", "title": "Kling lip sync update", "url": "https://example.com/kling", "source": "hn", "where": "Hacker News", "score": 80, "comments": 12, "commentsUrl": "https://news.ycombinator.com/item?id=2", "postedAt": "2026-11-21T10:00:00.000Z", "rank": 0.5 }
+ ]
+}

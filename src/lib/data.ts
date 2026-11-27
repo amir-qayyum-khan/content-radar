@@ -1,4 +1,4 @@
-import { loadEntries, loadHistory } from '../../scripts/lib/store.ts';
+import { loadEntries, loadHistory, loadNews, type News } from '../../scripts/lib/store.ts';
 import { rank, type Ranked } from '../../scripts/rank.ts';
 import { todayPKT, formatPKT } from '../../scripts/lib/time.ts';
 import type { CostLabel } from '../../scripts/lib/types.ts';
@@ -6,14 +6,14 @@ import type { CostLabel } from '../../scripts/lib/types.ts';
 export type { Ranked };
 type History = Record<string, Record<string, number>>;
 
-let cache: (ReturnType<typeof rank> & { history: History; today: string; updated: string }) | null = null;
+let cache: (ReturnType<typeof rank> & { history: History; today: string; updated: string; news: News }) | null = null;
 
 export function getSiteData() {
   if (cache) return cache;
   const dir = process.env.CR_DATA ?? 'data';
   const today = process.env.CR_TODAY ?? todayPKT();
   const history = loadHistory(dir);
-  cache = { ...rank(loadEntries(dir), history, today), history, today, updated: formatPKT(new Date()) };
+  cache = { ...rank(loadEntries(dir), history, today), history, today, updated: formatPKT(new Date()), news: loadNews(dir) };
   return cache;
 }
 

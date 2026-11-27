@@ -5,6 +5,7 @@ import { getSiteData } from '../lib/data.ts';
 interface Props { title: string; description: string }
 const { title, description } = Astro.props;
 const { updated } = getSiteData();
+const here = Astro.url.pathname.startsWith('/news') ? 'news' : 'tools';
 ---
 <!doctype html>
 <html lang="en">
@@ -23,6 +24,10 @@ const { updated } = getSiteData();
     <header class="site-head">
       <div class="wrap">
         <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Content Radar</a>
+<nav class="site-nav" aria-label="Sections">
+<a href="/" aria-current={here === 'news' ? undefined : 'page'}>Tools</a>
+<a href="/news/" aria-current={here === 'news' ? 'page' : undefined}>News</a>
+</nav>
         <div id="search" role="search"></div>
         <span class="updated">Updated {updated}</span>
       </div>

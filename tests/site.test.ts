@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { STAGE_LABELS, STAGES } from '../scripts/lib/types.ts';
 
 const DIST = 'dist';
@@ -45,6 +46,33 @@ describe('site build', () => {
     }
     expect(read('tool/evil/xss/bad/index.html')).toContain('&lt;img src=x onerror');
   });
+
+  it('lists news stories in rank order, escaped, with safe external links', () => {
+    const html = read('news/index.html');
+    const list = html.slice(html.indexOf('data-list'));
+    expect(list.match(/<li\b/g)).toHaveLength(3);
+    const pos = ['Sora 2 ships', '&lt;script&gt;alert(1)&lt;/script&gt; Sora', 'Kling lip sync'].map((t) => list.indexOf(t));
+    expect(pos.every((p) => p > 0)).toBe(true);
+    expect([...pos].sort((a, b) => a - b)).toEqual(pos);
+    expect(html).not.toContain('<script>alert(1)</script>');
+    const ext = html.match(/<a [^>]*href="https?:[^>]*>/g) ?? [];
+    expect(ext.length).toBeGreaterThanOrEqual(6);
+    for (const a of ext) expect(a).toContain('rel="noopener nofollow"');
+  });
+
+  it('links to news from the header', () => {
+    expect(read('index.html')).toContain('href="/news/"');
+  });
+
+  it('shows an empty state when there is no news yet', () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cr-nonews-'));
+    fs.cpSync('tests/fixtures/data', tmp, { recursive: true });
+    fs.rmSync(path.join(tmp, 'news.json'));
+    const out = path.resolve('.superpowers/tmp/nonews-dist'); // same drive as the repo: Astro moves assets with rename
+    fs.rmSync(out, { recursive: true, force: true });
+    execSync(`npx astro build --outDir "${out}"`, { env: { ...process.env, CR_DATA: tmp, CR_TODAY: '2026-11-27' }, stdio: 'pipe' });
+    expect(fs.readFileSync(path.join(out, 'news', 'index.html'), 'utf8')).toContain('No video stories this week yet.');
+  }, 180_000);
 
   it('shows coming soon when there is no write-up', () => {
     expect(read('tool/evil/xss/bad/index.html')).toContain('Full guide coming soon');

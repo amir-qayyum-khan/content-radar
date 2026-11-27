@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getSiteData, ago, fmtNum } from '../../lib/data.ts';
+import { formatPKT } from '../../../scripts/lib/time.ts';
+
+const { news, today } = getSiteData();
+const { items } = news;
+const sources = [...new Set(items.map((i) => (i.source === 'hn' ? 'Hacker News' : 'Reddit')))];
+const ext = { target: '_blank', rel: 'noopener nofollow' };
+---
+<Base title="AI video news: Content Radar" description="Top stories about AI video creation from the last 7 days, ranked by votes on Hacker News and Reddit.">
+  <div class="wrap intro">
+    <h1>AI video news</h1>
+    <p>
+      The most upvoted stories about AI video, voice and film tools from the last 7 days{sources.length > 0 && <> on {sources.join(' and ')}</>}.
+      {news.updated && <>{' '}Stories fetched {formatPKT(new Date(news.updated))}.</>}
+    </p>
+  </div>
+
+  {items.length > 0 && (
+    <div class="filters" aria-label="Sort stories">
+      <div class="wrap">
+        <label>Sort
+          <select id="n-sort">
+            <option value="top">Top</option>
+            <option value="newest">Newest</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  )}
+
+  <section class="block wrap" aria-label="Stories">
+    {items.length > 0 ? (
+      <ol class="news" data-list>
+        {items.map((i) => (
+          <li class="story" data-row data-rank={i.rank} data-posted={i.postedAt}>
+            <a class="story-title" href={i.url} {...ext}>{i.title}</a>
+            <span class="story-meta">
+              <span class="tag">{i.where}</span>
+              <span aria-label={`${i.score} points`}>▲ {fmtNum(i.score)}</span>
+              <a href={i.commentsUrl} {...ext}>{i.comments} comments</a>
+              <time datetime={i.postedAt}>{ago(i.postedAt, today)}</time>
+            </span>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="empty">No video stories this week yet. The list refreshes daily at 04:00 PKT.</p>
+    )}
+  </section>
+</Base>
+
+<script>
+const sortEl = document.getElementById('n-sort') as HTMLSelectElement | null;
+const list = document.querySelector<HTMLElement>('[data-list]');
+if (sortEl && list) {
+  const rows = [...list.querySelectorAll<HTMLElement>('[data-row]')];
+  const apply = () => {
+    const by = sortEl.value === 'newest' ? (r: HTMLElement) => r.dataset.posted ?? '' : (r: HTMLElement) => Number(r.dataset.rank);
+    rows.sort((a, b) => (by(a) < by(b) ? 1 : by(a) > by(b) ? -1 : 0));
+    for (const r of rows) list.appendChild(r);
+    history.replaceState(null, '', sortEl.value === 'top' ? location.pathname : '?sort=newest');
+  };
+  sortEl.value = new URLSearchParams(location.search).get('sort') === 'newest' ? 'newest' : 'top';
+  sortEl.addEventListener('change', apply);
+  apply();
+}
+</script>
