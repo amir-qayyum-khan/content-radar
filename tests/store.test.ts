@@ -9,6 +9,13 @@ let dir: string;
 beforeEach(() => { dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cr-store-')); });
 
 describe('store', () => {
+  it('a corrupt news file reads as empty instead of breaking the build', () => {
+    fs.writeFileSync(path.join(dir, 'news.json'), '{"items": nu');
+    expect(loadNews(dir)).toEqual({ updated: '', items: [] });
+    fs.writeFileSync(path.join(dir, 'news.json'), '{"updated": "x", "items": null}');
+    expect(loadNews(dir).items).toEqual([]);
+  });
+
   it('news defaults to empty and round-trips', () => {
     expect(loadNews(dir)).toEqual({ updated: '', items: [] });
     const n = { updated: '2026-11-27T00:00:00Z', items: [{ id: 'hn-1', title: 'Sora', url: 'https://a', source: 'hn' as const, where: 'Hacker News', score: 5, comments: 1, commentsUrl: 'https://news.ycombinator.com/item?id=1', postedAt: '2026-11-26T00:00:00Z', rank: 1 }] };

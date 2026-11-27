@@ -59,7 +59,8 @@ async function fromHN(f: Fetch, now: Date, log: (s: string) => void): Promise<Ne
       if (!Array.isArray(r?.hits)) throw new Error('bad response');
       ok++;
       for (const h of r.hits as { objectID: string; title?: string; url?: string | null; points?: number; num_comments?: number; created_at_i: number }[]) {
-        if (!h.title || !isVideoNews(h.title)) continue;
+        // One bad hit must not drop the rest of the batch.
+        if (typeof h.title !== 'string' || !Number.isFinite(h.created_at_i) || !isVideoNews(h.title)) continue;
         const commentsUrl = `https://news.ycombinator.com/item?id=${encodeURIComponent(h.objectID)}`;
         const link = h.url ?? commentsUrl; // text posts link to their own page
         if (!isWebUrl(link)) continue;
@@ -67,7 +68,9 @@ async function fromHN(f: Fetch, now: Date, log: (s: string) => void): Promise<Ne
       }
     } catch (e) { log(`news: hn "${q}": ${(e as Error).message}`); }
   }
-  return ok ? [...out.values()] : null;
+  log(`news: hn ${ok}/${NEWS_QUERIES.length} queries answered`);
+  // A mostly-failed run would replace a full list with a thin one; keep yesterday's instead.
+  return ok >= NEWS_QUERIES.length / 2 ? [...out.values()] : null;
 }
 
 async function fromReddit(f: Fetch, env: Record<string, string | undefined>, log: (s: string) => void): Promise<NewsItem[] | null> {
@@ -91,8 +94,9 @@ async function fromReddit(f: Fetch, env: Record<string, string | undefined>, log
       const r = (await getJson(f, `https://oauth.reddit.com/r/${sub}/top?t=week&limit=50&raw_json=1`, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': UA } })) as { data?: { children?: unknown } };
       if (!Array.isArray(r?.data?.children)) throw new Error('bad response');
       ok++;
-      for (const { data: p } of r.data.children as { data: { id: string; title: string; url: string; permalink: string; score: number; num_comments: number; created_utc: number; over_18: boolean; is_self: boolean } }[]) {
-        if (p.over_18 || !p.title || (!whole && !isVideoNews(p.title))) continue;
+      for (const c of r.data.children as { data?: { id: string; title: string; url: string; permalink: string; score: number; num_comments: number; created_utc: number; over_18: boolean; is_self: boolean } }[]) {
+        const p = c?.data;
+        if (!p || p.over_18 || typeof p.title !== 'string' || !Number.isFinite(p.created_utc) || (!whole && !isVideoNews(p.title))) continue;
         const commentsUrl = `https://www.reddit.com${p.permalink}`;
         const link = p.is_self ? commentsUrl : p.url;
         if (!isWebUrl(link) || !isWebUrl(commentsUrl)) continue;
@@ -104,8 +108,10 @@ async function fromReddit(f: Fetch, env: Record<string, string | undefined>, log
 }
 
 /** Top AI-video stories of the last 7 days. Never throws; okSources = sources that answered. */
-export async function fetchNews(opts: { fetch?: Fetch; now?: Date; env?: Record<string, string | undefined>; log?: (s: string) => void } = {}): Promise<{ items: NewsItem[]; okSources: number }> {
-  const f = opts.fetch ?? fetch;
+export async function fetchNews(opts: { fetch?: Fetch; now?: Date; env?: Record<string, string | undefined>; log?: (s: string) => void; timeoutMs?: number } = {}): Promise<{ items: NewsItem[]; okSources: number }> {
+  const base = opts.fetch ?? fetch;
+  // A stalled source must not hold up the nightly build and publish.
+  const f: Fetch = (u, init) => base(u, { ...init, signal: AbortSignal.timeout(opts.timeoutMs ?? 15_000) });
   const log = opts.log ?? (() => {});
   const sources = [await fromHN(f, opts.now ?? new Date(), log), await fromReddit(f, opts.env ?? process.env, log)];
   const okSources = sources.filter(Boolean).length;

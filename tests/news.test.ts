@@ -61,6 +61,25 @@ describe('fetchNews', () => {
     expect(r).toEqual({ items: [], okSources: 0 });
   });
 
+  it('gives up on a source that hangs', async () => {
+    const f = ((_u: string, init?: RequestInit) => new Promise((_r, reject) => init?.signal?.addEventListener('abort', () => reject(new Error('aborted'))))) as typeof fetch;
+    const r = await fetchNews({ fetch: f, now: NOW, env: {}, log: () => {}, timeoutMs: 5 });
+    expect(r.okSources).toBe(0);
+  });
+
+  it('skips a malformed hit and keeps the rest of the batch', async () => {
+    const bad = { objectID: '9', title: 'Sora video', url: 'https://bad' };
+    const { f } = fake({ 'hn.algolia.com': { body: { hits: [bad, { ...hnHit('2', 'Veo video', 'https://good', 3), title: 'Veo video' }, { objectID: '3', title: 42 }] } } });
+    const r = await fetchNews({ fetch: f, now: NOW, env: {}, log: () => {} });
+    expect(r.items.map((i) => i.url)).toEqual(['https://good']);
+  });
+
+  it('does not count Hacker News as up when most queries fail', async () => {
+    const { f } = fake({ 'query=Sora': { body: { hits: [hnHit('1', 'Sora video', 'https://a', 5)] } }, 'hn.algolia.com': { status: 503, body: '' } });
+    const r = await fetchNews({ fetch: f, now: NOW, env: {}, log: () => {} });
+    expect(r.okSources).toBe(0);
+  });
+
   it('survives junk JSON', async () => {
     const { f } = fake({ 'hn.algolia.com': { body: '<html>' } });
     const r = await fetchNews({ fetch: f, now: NOW, env: {}, log: () => {} });

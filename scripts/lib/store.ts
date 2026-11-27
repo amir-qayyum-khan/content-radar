@@ -49,7 +49,11 @@ export function saveRaw(date: string, cands: Candidate[], dir = 'data'): void {
 export type News = { updated: string; items: NewsItem[] };
 
 export function loadNews(dir = 'data'): News {
-  return readJson(path.join(dir, 'news.json'), { updated: '', items: [] });
+  // Every page reads this; a bad file must not break the whole site build.
+  try {
+    const n = readJson<Partial<News>>(path.join(dir, 'news.json'), {});
+    return { updated: typeof n.updated === 'string' ? n.updated : '', items: Array.isArray(n.items) ? n.items : [] };
+  } catch { return { updated: '', items: [] }; }
 }
 
 export function saveNews(n: News, dir = 'data'): void {
