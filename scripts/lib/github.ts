@@ -2,6 +2,7 @@ import type { RepoStats } from './types.ts';
 
 const API = 'https://api.github.com';
 const MAX_WAIT_MS = 60_000;
+const QUOTA_WAIT_MS = 65 * 60_000;
 const CODE_SEARCH_GAP_MS = 6_500; // code search allows 10 requests/minute
 
 export type GitHub = ReturnType<typeof createGitHub>;
@@ -25,7 +26,10 @@ export function createGitHub(opts: { token?: string; fetch?: typeof fetch; sleep
         const retryAfter = Number(res.headers.get('retry-after'));
         const reset = Number(res.headers.get('x-ratelimit-reset'));
         const wait = retryAfter > 0 ? retryAfter * 1000 : reset > 0 ? reset * 1000 - Date.now() : 5_000;
-        await sleep(Math.min(Math.max(wait, 1000), MAX_WAIT_MS));
+        // Hourly quota used up: wait for the reset so the run finishes instead of dropping tools.
+        const cap = res.headers.get('x-ratelimit-remaining') === '0' ? QUOTA_WAIT_MS : MAX_WAIT_MS;
+        if (cap === QUOTA_WAIT_MS) log(`github: hourly quota used, waiting ${Math.round(wait / 60_000)} min`);
+        await sleep(Math.min(Math.max(wait, 1000), cap));
         continue;
       }
       log(`github: ${res.status} for ${path.split('?')[0]}`);
@@ -60,12 +64,12 @@ export function createGitHub(opts: { token?: string; fetch?: typeof fetch; sleep
       }
       return out;
     },
-    async searchRepos(q: string, maxPages = 3): Promise<string[]> {
-      const out: string[] = [];
+    async searchRepos(q: string, maxPages = 3): Promise<{ repo: string; description: string }[]> {
+      const out: { repo: string; description: string }[] = [];
       for (let page = 1; page <= maxPages; page++) {
-        const r = await json<{ items: { full_name: string }[] }>(`/search/repositories?q=${encodeURIComponent(q)}&sort=stars&per_page=100&page=${page}`);
+        const r = await json<{ items: { full_name: string; description: string | null }[] }>(`/search/repositories?q=${encodeURIComponent(q)}&sort=stars&per_page=100&page=${page}`);
         if (!r) break;
-        out.push(...r.items.map((i) => i.full_name));
+        out.push(...r.items.map((i) => ({ repo: i.full_name, description: i.description ?? '' })));
         if (r.items.length < 100) break;
       }
       return out;

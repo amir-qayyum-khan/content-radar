@@ -4,7 +4,7 @@ import type { GitHub } from './lib/github.ts';
 import { digestReadme } from './tools/digest.ts';
 import { extractInstall } from './tools/install.ts';
 import { extractCostEvidence } from './tools/cost.ts';
-import { prefilter } from './tools/prefilter.ts';
+import { prefilter, looksRelevant } from './tools/prefilter.ts';
 import { inputHash } from './tools/hash.ts';
 
 const CODE_EXT = /\.(py|js|mjs|cjs|ts|sh|ps1|bat|cmd)$/i;
@@ -51,19 +51,26 @@ async function fetchFiles(c: Candidate, gh: GitHub, readme: string): Promise<Fil
 /** Turns candidates into entries: one per installable unit, with stats, digests and stale/archive rules. */
 export async function enrich(cands: Candidate[], gh: GitHub, prev: Record<string, Entry>, today: string, log: (s: string) => void = () => {}): Promise<Record<string, Entry>> {
   // A skill inside a plugin of the same repo is listed on the plugin's page, not on its own.
+  const prevList = Object.values(prev);
+  const known = (c: Candidate) => prevList.some((p) => p.repo === c.repo && p.path === c.path && p.kind === c.kind);
+  // GitHub allows 5,000 calls/hour; most search hits are unrelated, so drop them by name first.
+  cands = cands.filter((c) => known(c) || looksRelevant(c.repo, c.path, c.hint));
   const plugins = cands.filter((c) => c.kind === 'plugin');
   const units = cands.filter((c) => c.kind === 'plugin' || !plugins.some((p) => p.repo === c.repo && (p.path === '' || c.path === p.path || c.path.startsWith(p.path + '/'))));
 
   const byRepo = new Map<string, Candidate[]>();
   for (const c of units) byRepo.set(c.repo, [...(byRepo.get(c.repo) ?? []), c]);
 
-  const prevList = Object.values(prev);
   const staleBefore = new Date(today).getTime() - CAPS.staleDays * 86_400_000;
   const out: Record<string, Entry> = {};
 
   for (const [repo, list] of byRepo) {
     let stats: Omit<RepoStats, 'readme'>;
-    try { stats = await gh.getRepo(repo); } catch (e) { log(`enrich: ${repo}: ${(e as Error).message}`); continue; }
+    try { stats = await gh.getRepo(repo); } catch (e) {
+      log(`enrich: ${repo}: ${(e as Error).message}`);
+      for (const p of prevList) if (p.repo === repo) out[p.id] = p; // keep yesterday's data rather than dropping it
+      continue;
+    }
     if (stats.archived) continue;
     let readme: string | null = null;
     const made: Entry[] = [];

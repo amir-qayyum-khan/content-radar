@@ -19,10 +19,31 @@ function fakeGh(opts: { archived?: boolean; pushedAt?: string; files?: Record<st
   return { gh, calls };
 }
 
-const skill = (path: string, repo = 'o/r'): Candidate => ({ repo, kind: 'skill', path, sourceName: 'code-search' });
-const plugin = (path: string, repo = 'o/r'): Candidate => ({ repo, kind: 'plugin', path, sourceName: 'marketplace' });
+const skill = (path: string, repo = 'o/r'): Candidate => ({ repo, kind: 'skill', path, sourceName: 'code-search', hint: 'video' });
+const plugin = (path: string, repo = 'o/r'): Candidate => ({ repo, kind: 'plugin', path, sourceName: 'marketplace', hint: 'video' });
 
 describe('enrich', () => {
+  it('skips unrelated candidates before any GitHub call', async () => {
+    let repoCalls = 0;
+    const { gh } = fakeGh();
+    (gh as { getRepo: unknown }).getRepo = async () => { repoCalls++; throw new Error('should not be called'); };
+    expect(await enrich([{ repo: 'a/db-tools', kind: 'skill', path: 'skills/postgres', sourceName: 'code-search' }], gh, {}, TODAY)).toEqual({});
+    expect(repoCalls).toBe(0);
+  });
+
+  it('keeps a candidate whose hint is relevant even when its name is not', async () => {
+    const out = await enrich([{ repo: 'o/r', kind: 'skill', path: 'x', sourceName: 'marketplace', hint: 'ffmpeg reels' }], fakeGh().gh, {}, TODAY);
+    expect(Object.keys(out)).toHaveLength(1);
+  });
+
+  it('keeps last run entries for a repo when GitHub fails (rate limit)', async () => {
+    const old = makeEntry({ id: 'o/r/r', repo: 'o/r', path: '', firstSeen: '2026-11-01' });
+    const { gh } = fakeGh();
+    (gh as { getRepo: unknown }).getRepo = async () => { throw new Error('github: repo not found o/r'); };
+    const out = await enrich([skill('')], gh, { 'o/r/r': old }, TODAY);
+    expect(out['o/r/r']).toEqual(old);
+  });
+
   it('drops archived repos', async () => {
     expect(await enrich([skill('')], fakeGh({ archived: true }).gh, {}, TODAY)).toEqual({});
   });

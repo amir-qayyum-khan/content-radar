@@ -1,5 +1,6 @@
 import type { Candidate } from './lib/types.ts';
 import type { GitHub } from './lib/github.ts';
+import { looksRelevant } from './tools/prefilter.ts';
 export type { GitHub } from './lib/github.ts';
 
 export const KEYWORDS = ['video', 'audio', 'voice', 'tts', 'ffmpeg', 'remotion', 'screenplay', 'script', 'storyboard', 'subtitle', 'music', 'sfx', 'lip-sync', 'animation', 'reel', 'shorts', 'drama', 'cinematic', 'documentary', 'edit'];
@@ -35,11 +36,11 @@ export async function collect(gh: GitHub, log: (s: string) => void = () => {}): 
   // (b) marketplaces first, so plugin entries win the dedupe over topic guesses
   for (const hit of await safely('marketplaces', () => gh.searchCode('filename:marketplace.json path:.claude-plugin'), [])) {
     const raw = await safely(`marketplace ${hit.repo}`, () => gh.getFile(hit.repo, hit.path), null);
-    let plugins: { source?: unknown }[] = [];
+    let plugins: { name?: string; description?: string; source?: unknown }[] = [];
     try { plugins = raw ? (JSON.parse(raw).plugins ?? []) : []; } catch { log(`collect: bad marketplace.json in ${hit.repo}`); }
     for (const p of Array.isArray(plugins) ? plugins : []) {
       const src = pluginSource(hit.repo, p?.source);
-      if (src) add({ ...src, kind: 'plugin', sourceName: 'marketplace' });
+      if (src) add({ ...src, kind: 'plugin', sourceName: 'marketplace', hint: `${p.name ?? ''} ${p.description ?? ''}`.trim() });
     }
   }
 
@@ -52,9 +53,10 @@ export async function collect(gh: GitHub, log: (s: string) => void = () => {}): 
 
   // (c) repo topics
   for (const t of TOPICS) {
-    for (const repo of await safely(`topic ${t}`, () => gh.searchRepos(`topic:${t}`), [])) {
+    for (const { repo, description } of await safely(`topic ${t}`, () => gh.searchRepos(`topic:${t}`), [])) {
+      if (!looksRelevant(repo, description)) continue; // saves a plugin.json lookup per unrelated repo
       const files = await safely(`plugin.json ${repo}`, () => gh.listDir(repo, '.claude-plugin'), [] as string[]);
-      add({ repo, kind: files.includes('plugin.json') ? 'plugin' : 'skill', path: '', sourceName: 'topic' });
+      add({ repo, kind: files.includes('plugin.json') ? 'plugin' : 'skill', path: '', sourceName: 'topic', hint: description });
     }
   }
 

@@ -1,5 +1,6 @@
 // One-time: point GitHub Pages at the gh-pages branch and set the custom domain.
 // Usage: npx tsx scripts/setup-pages.ts
+export {}; // module, so top-level await type-checks
 const REPO = 'amir-qayyum-khan/content-radar';
 const DOMAIN = 'content.swiftwf.com';
 const token = process.env.GITHUB_PERSONAL_ACCESS_TOKEN;

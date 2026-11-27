@@ -20,7 +20,8 @@ export type CostLabel = typeof COST_LABELS[number];
 
 export const CAPS = { write: 60, classify: 200, classifyBatch: 10, digestChars: 6000, maybeBelow: 0.6, staleDays: 365 };
 
-export interface Candidate { repo: string; kind: 'skill' | 'plugin'; path: string; sourceName: string }
+/** `hint`: name/description text from the source, used to skip unrelated tools before any GitHub call. */
+export interface Candidate { repo: string; kind: 'skill' | 'plugin'; path: string; sourceName: string; hint?: string }
 
 export interface RepoStats {
   repo: string; stars: number; forks: number; pushedAt: string; license: string | null;

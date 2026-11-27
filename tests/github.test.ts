@@ -43,6 +43,15 @@ describe('github client', () => {
     expect(Math.max(...s.waits)).toBeLessThanOrEqual(60000);
   });
 
+  it('waits for the hourly reset when the main quota is used up', async () => {
+    const reset = String(Math.floor(Date.now() / 1000) + 30 * 60);
+    const { f } = fakeFetch(() => [{ status: 403, headers: { 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': reset } }, { status: 200, body: { items: [] } }]);
+    const s = noSleep();
+    await createGitHub({ token: 't', fetch: f, sleep: s.sleep }).searchRepos('topic:x', 1);
+    expect(Math.max(...s.waits)).toBeGreaterThan(25 * 60_000);
+    expect(Math.max(...s.waits)).toBeLessThanOrEqual(65 * 60_000);
+  });
+
   it('getReadme returns empty string on 404', async () => {
     const { f } = fakeFetch(() => ({ status: 404, body: { message: 'Not Found' } }));
     expect(await createGitHub({ token: 't', fetch: f, sleep: noSleep().sleep }).getReadme('o/r')).toBe('');
@@ -53,6 +62,11 @@ describe('github client', () => {
     await createGitHub({ token: 'SECRET', fetch: f, sleep: noSleep().sleep }).searchRepos('topic:x', 1);
     expect(calls[0].headers.Authorization).toBe('Bearer SECRET');
     expect(calls[0].url).not.toContain('SECRET');
+  });
+
+  it('searchRepos returns repo names with descriptions', async () => {
+    const { f } = fakeFetch(() => ({ status: 200, body: { items: [{ full_name: 'o/r', description: 'reels' }, { full_name: 'o/s', description: null }] } }));
+    expect(await createGitHub({ token: 't', fetch: f, sleep: noSleep().sleep }).searchRepos('topic:x', 1)).toEqual([{ repo: 'o/r', description: 'reels' }, { repo: 'o/s', description: '' }]);
   });
 
   it('getRepo maps fields', async () => {

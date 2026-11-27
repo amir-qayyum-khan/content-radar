@@ -12,6 +12,12 @@ const STAGE_WORDS: Record<Exclude<Stage, 'other'>, string[]> = {
 
 const esc = (w: string) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/** Name-level check before any GitHub call: repo, folder path and source hint, with separators as spaces. */
+export function looksRelevant(...parts: (string | undefined)[]): boolean {
+  const text = parts.filter(Boolean).join(' ').replace(/[\/_.-]+/g, ' ');
+  return /\b(video|film|movie|podcast|media|content creat)/i.test(text) || prefilter(text).keep;
+}
+
 /** Cheap keyword pass before any LLM call: drop clearly unrelated items and guess a stage. */
 export function prefilter(text: string): { keep: boolean; score: number; stageGuess: Stage } {
   let score = 0;

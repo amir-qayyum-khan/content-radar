@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { digestReadme } from '../scripts/tools/digest.ts';
 import { extractInstall, isAllowedInstall } from '../scripts/tools/install.ts';
 import { extractCostEvidence } from '../scripts/tools/cost.ts';
-import { prefilter } from '../scripts/tools/prefilter.ts';
+import { prefilter, looksRelevant } from '../scripts/tools/prefilter.ts';
 import { inputHash } from '../scripts/tools/hash.ts';
 
 const big = [
@@ -115,5 +115,14 @@ describe('inputHash', () => {
     expect(inputHash('a', 'b')).toBe(inputHash('a', 'b'));
     expect(inputHash('a', 'b')).not.toBe(inputHash('a', 'c'));
     expect(inputHash('ab', '')).not.toBe(inputHash('a', 'b'));
+  });
+});
+
+describe('looksRelevant', () => {
+  it('passes names about video even without a stage word', () => {
+    expect(looksRelevant('o/video-tools', 'skills/clip_maker')).toBe(true);
+  });
+  it('drops unrelated names', () => {
+    expect(looksRelevant('a/db-tools', 'skills/postgres', 'SQL helpers')).toBe(false);
   });
 });
