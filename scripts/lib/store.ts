@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Candidate, Entry } from './types.ts';
+import type { NewsItem } from '../news.ts';
 
 type History = Record<string, Record<string, number>>;
 
@@ -43,4 +44,14 @@ export function saveSnapshot(date: string, stars: Record<string, number>, dir = 
 
 export function saveRaw(date: string, cands: Candidate[], dir = 'data'): void {
   writeJson(path.join(dir, 'raw', `${date}.json`), cands);
+}
+
+export type News = { updated: string; items: NewsItem[] };
+
+export function loadNews(dir = 'data'): News {
+  return readJson(path.join(dir, 'news.json'), { updated: '', items: [] });
+}
+
+export function saveNews(n: News, dir = 'data'): void {
+  writeJson(path.join(dir, 'news.json'), n);
 }

@@ -2,13 +2,20 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { loadEntries, saveEntries, loadHistory, saveSnapshot, saveRaw } from '../scripts/lib/store.ts';
+import { loadEntries, saveEntries, loadHistory, saveSnapshot, saveRaw, loadNews, saveNews } from '../scripts/lib/store.ts';
 import { makeEntry } from './helpers.ts';
 
 let dir: string;
 beforeEach(() => { dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cr-store-')); });
 
 describe('store', () => {
+  it('news defaults to empty and round-trips', () => {
+    expect(loadNews(dir)).toEqual({ updated: '', items: [] });
+    const n = { updated: '2026-11-27T00:00:00Z', items: [{ id: 'hn-1', title: 'Sora', url: 'https://a', source: 'hn' as const, where: 'Hacker News', score: 5, comments: 1, commentsUrl: 'https://news.ycombinator.com/item?id=1', postedAt: '2026-11-26T00:00:00Z', rank: 1 }] };
+    saveNews(n, dir);
+    expect(loadNews(dir)).toEqual(n);
+  });
+
   it('loadEntries on empty dir returns {}', () => {
     expect(loadEntries(dir)).toEqual({});
   });

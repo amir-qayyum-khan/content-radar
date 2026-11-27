@@ -4,7 +4,8 @@ import { execSync, execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { CAPS, type Candidate, type Entry } from './lib/types.ts';
 import { createGitHub } from './lib/github.ts';
-import { loadEntries, saveEntries, saveSnapshot, saveRaw } from './lib/store.ts';
+import { loadEntries, saveEntries, saveSnapshot, saveRaw, saveNews } from './lib/store.ts';
+import { fetchNews } from './news.ts';
 import { todayPKT } from './lib/time.ts';
 import { collect } from './collect.ts';
 import { enrich } from './enrich.ts';
@@ -23,6 +24,8 @@ export interface Deps {
   saveEntries: (e: Record<string, Entry>) => void;
   saveSnapshot: (date: string, stars: Record<string, number>) => void;
   saveRaw: (date: string, c: Candidate[]) => void;
+  /** Refresh data/news.json; may throw, never stops the run. */
+  news: () => Promise<void>;
   build: () => Promise<void>;
   publish: () => Promise<void>;
   commitData: (today: string) => Promise<void>;
@@ -48,6 +51,12 @@ function defaultDeps(today: string): Deps {
     saveEntries: (e) => saveEntries(e),
     saveSnapshot: (d, s) => saveSnapshot(d, s),
     saveRaw: (d, c) => saveRaw(d, c),
+    news: async () => {
+      const r = await fetchNews({ log });
+      log(`news: ${r.items.length} stories from ${r.okSources} source(s)`);
+      // Every source down: keep yesterday's list.
+      if (r.okSources > 0) saveNews({ updated: new Date().toISOString(), items: r.items });
+    },
     build: async () => { execSync('npm run build', { stdio: 'pipe', env: { ...process.env, CR_TODAY: today } }); },
     publish: () => publish('dist', today),
     commitData: async (t) => {
@@ -99,6 +108,9 @@ export async function nightly(opts: { backfill: boolean; deps?: Partial<Deps>; t
     d.saveSnapshot(today, stars);
     d.saveRaw(today, cands);
   } catch (e) { fail('save', e); return { ok: false, published: false }; }
+
+  // News is a side page: a failure is logged only, never stops publishing.
+  try { await d.news(); } catch (e) { d.log(`news: ${(e as Error).message}`); }
 
   let published = false;
   try {

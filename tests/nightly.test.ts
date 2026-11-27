@@ -13,6 +13,7 @@ function deps(over: Partial<Deps> = {}) {
     saveEntries: () => { calls.push('saveEntries'); },
     saveSnapshot: (_d, stars) => { calls.push(`snapshot:${JSON.stringify(stars)}`); },
     saveRaw: () => { calls.push('saveRaw'); },
+    news: async () => { calls.push('news'); },
     build: async () => { calls.push('build'); },
     publish: async () => { calls.push('publish'); },
     commitData: async () => { calls.push('commitData'); },
@@ -27,7 +28,14 @@ describe('nightly', () => {
   it('runs every step in order and publishes', async () => {
     const { d, calls } = deps();
     expect(await nightly({ backfill: false, deps: d, today: '2026-11-27' })).toEqual({ ok: true, published: true });
-    expect(calls).toEqual(['collect', 'enrich', 'saveEntries', 'classify:200', 'write:60', 'saveEntries', 'snapshot:{"o/r":7}', 'saveRaw', 'build', 'publish', 'commitData']);
+    expect(calls).toEqual(['collect', 'enrich', 'saveEntries', 'classify:200', 'write:60', 'saveEntries', 'snapshot:{"o/r":7}', 'saveRaw', 'news', 'build', 'publish', 'commitData']);
+  });
+
+  it('still publishes when the news step fails, without a failure toast', async () => {
+    const { d, calls } = deps({ news: async () => { calls.push('news'); throw new Error('hn down'); } });
+    expect((await nightly({ backfill: false, deps: d, today: '2026-11-27' })).published).toBe(true);
+    expect(calls).toContain('publish');
+    expect(calls.some((c) => c.startsWith('notify:'))).toBe(false);
   });
 
   it('stops before saving or publishing when collect finds nothing', async () => {
